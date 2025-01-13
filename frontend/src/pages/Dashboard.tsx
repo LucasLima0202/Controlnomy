@@ -18,6 +18,21 @@ const defaultOptions = {
 
 const BodyGroup = styled.div`
   width: 100%;
+  margin:0;
+  box-sizing: border-box;
+  background-color: #F5F5F5;
+  padding-top: 80px; /* Espaço reservado para a Navbar */
+  min-height: 100vh; /* Garante que o conteúdo ocupe toda a altura da tela */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  color: #343A40;
+`;
+
+const WholeSite = styled.div`
+  width: 100%;
+  margin:0;
   box-sizing: border-box;
   background-color: #F5F5F5;
   padding-top: 80px; /* Espaço reservado para a Navbar */
@@ -73,7 +88,7 @@ box-shadow:  rgba(201, 201, 201, 0.15) 0px 4px 16px, rgba(201, 201, 201, 0.15) 0
 `
 
 const GroupLine = styled.div`
-width:100%;
+width:90%;
 border: solid #F1F1F1 0.8px;
 display:flex;
 justify-content:center;
@@ -101,13 +116,9 @@ const Elipse = styled.div`
 const Dashboard = () => {
   const navigate = useNavigate();
 
-const handleLogout = () => {
-  localStorage.removeItem("token");
-  sessionStorage.removeItem("token");
-  navigate("/Login"); // Redireciona para a página de login
-};
+
     return (
-      <>
+      <WholeSite>
         <Navbarui />
         <BodyGroup>
           <Title>Bem-vindo ao Dashboard</Title>
@@ -128,9 +139,8 @@ const handleLogout = () => {
               <Button title="Clique aqui"   bgcolor="#343A40" />
             </GroupLine>
           </GroupWelcome>
-          <button onClick={handleLogout}>Logout</button>
         </BodyGroup>
-      </>
+      </WholeSite>
     );
   };
   

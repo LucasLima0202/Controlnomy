@@ -1,8 +1,10 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import styled from "styled-components";
-import Validation from "../hooks/LoginValidation"; 
+import Validation from "../hooks/LoginValidation";
+
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 // Estilização utilizando styled-components
 const Container = styled.div`
   height: 100vh;
@@ -40,8 +42,6 @@ const Input = styled.input`
   transition-property: border-left, border-right, box-shadow;
 
   &:focus {
-    border-left: solid 8px rgba(255, 255, 255, 0.5);
-    border-right: solid 8px rgba(255, 255, 255, 0.5);
     box-shadow: 0 0 15px rgba(193, 193, 193, 0.8);
   }
 `;
@@ -62,6 +62,7 @@ const Button = styled.button`
   color: #fff;
   font-size: 17px;
   margin-bottom: 5%;
+  margin-top:4%;
   letter-spacing: 0.5px;
   border-radius: 5px;
   cursor: pointer;
@@ -126,6 +127,12 @@ const Links = styled.a`
     color: #282B2F;
   }
 `;
+const ErrorSpans = styled.span`
+  color: #960707;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom:20px;
+`;
 const Label = styled.label`
 color:#7A7A7A;
 font-size: 1.1rem;
@@ -163,94 +170,97 @@ interface FormValues {
 
 const Login = () => {
 
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [values, setValues] = useState<FormValues>({
-    email: ' ',
-    password:' '
-})
+    email: '',
+    password: '',
+  });
 
-const [errors, setErrors] = useState<Partial<FormValues>>({});
 
-const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const [errors, setErrors] = useState<Partial<FormValues>>({});
+
+  const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValues((prev) => ({
       ...prev,
       [event.target.name]: event.target.value,
     }));
   };
+
+  const [rememberMe, setRememberMe] = useState(false); //Lembrar de im opçao
+
+
+  const { setIsAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const validationErrors = Validation(values);
+    setErrors(validationErrors);
   
-const [rememberMe, setRememberMe] = useState(false); //Lembrar de im opçao
-
-
-
-const navigate = useNavigate();
-
-const handleSubmit = async (event: React.FormEvent) => {
-  event.preventDefault();
-  const validationErrors = Validation(values);
-  setErrors(validationErrors);
-
-  if (!validationErrors.email && !validationErrors.password) {
-    try {
-      const res = await axios.post("http://localhost:8081/Login", values);
-      console.log(res.data);
-
-      if (res.data === "Sucesso") {
-        // Armazena o token no localStorage ou sessionStorage
-        const storage = rememberMe ? localStorage : sessionStorage;
-        storage.setItem("token", res.data.token); // Salva o token
-
-        navigate("/Dashboard");
-      } else {
-        alert("Credenciais inválidas.");
+    if (!validationErrors.email && !validationErrors.password) {
+      try {
+        console.log("Enviando dados para o backend:", values); // Log para debug
+        const res = await axios.post("http://localhost:8081/Login", values);
+  
+        if (res.status === 200 && res.data.message === "Sucesso") {
+          console.log("Login bem-sucedido. Redirecionando...");
+          if (rememberMe) {
+            localStorage.setItem("token", res.data.token);
+          } else {
+            sessionStorage.setItem("token", res.data.token);
+          }
+          setIsAuthenticated(true);
+          navigate("/Dashboard"); // Redireciona
+        } else {
+          setErrorMessage(res.data.message || "Erro inesperado. Tente novamente.");
+        }
+      } catch (err: any) {
+        if (err.response) {
+          console.error("Erro ao fazer login:", err.response.data);
+          setErrorMessage(err.response.data.message || "Erro ao fazer login.");
+        } else {
+          console.error("Erro ao fazer login:", err);
+          setErrorMessage("Erro no servidor. Por favor, tente novamente mais tarde.");
+        }
       }
-    } catch (err) {
-      console.error("Erro ao fazer login:", err);
-      alert("Erro no servidor. Tente novamente mais tarde.");
     }
-  }
-};
-
-
+  };
 
   return (
     <Container>
       <Form>
-          <form onSubmit={handleSubmit}>
-            <CenterContainer>
-                <Logo></Logo>
-            </CenterContainer>
-            <ContainerLabel>
-                    <Label htmlFor="email">Email</Label>
-            </ContainerLabel>
-            <Input onChange={handleInput}  type="email" placeholder="Digite seu email" name="email"  />
-            {errors.email && <ErrorSpan>{errors.email}</ErrorSpan>}
-            <ContainerLabel>
-                    <Label htmlFor="password">Senha</Label>
-            </ContainerLabel>
-            <Input onChange={handleInput} type="password" placeholder="Digite sua senha" name="password"  />
+        <form id="form" onSubmit={handleSubmit}>
+          <CenterContainer>
+            <Logo></Logo>
+          </CenterContainer>
+          <ContainerLabel>
+            <Label id="email">Email</Label>
+          </ContainerLabel>
+          <Input onChange={handleInput} type="email" placeholder="Digite seu email" name="email" />
+          {errors.email && <ErrorSpan>{errors.email}</ErrorSpan>}
+          <ContainerLabel>
+            <Label id="password">Senha</Label>
+          </ContainerLabel>
+          <Input onChange={handleInput} type="password" placeholder="Digite sua senha" name="password" />
           {errors.password && <ErrorSpan>{errors.password}</ErrorSpan>}
-            <Options01>
-              <RememberMe>
-                <input type="checkbox"
-                 checked={rememberMe}
-                 onChange={(e) => setRememberMe(e.target.checked)}
-                /> Lembrar de mim
-              </RememberMe>
-              <Links href="#">Esqueceu sua senha?</Links>
-            </Options01>
-            <Button type="submit">ENTRAR</Button>
-            <Link to='/Register'>
+          <Options01>
+            <RememberMe>
+              <input id="checkbox" type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              /> Lembrar de mim
+            </RememberMe>
+            <Links href="#">Esqueceu sua senha?</Links>
+          </Options01>
+          {errorMessage && (
+            <ErrorSpans>{errorMessage}</ErrorSpans>
+          )}
+          <Button type="submit" id="submit">ENTRAR</Button>
+          <Link to='/Register'>
             <ButtonOut >CRIAR UMA CONTA</ButtonOut>
-            </Link>
-            {/* <Options02>
-              <p>
-                Not Registered?{" "}
-                <a href="#" onClick={toggleForm}>
-                  Create an Account
-                </a>
-              </p>
-            </Options02> */}
-          </form>
+          </Link>
+        </form>
       </Form>
     </Container>
   );
