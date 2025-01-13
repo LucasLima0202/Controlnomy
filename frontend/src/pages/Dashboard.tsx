@@ -4,6 +4,7 @@ import { getCurrentDate } from "../utils/data.jsx"; // Ajuste o caminho conforme
 import Lottie from "react-lottie";
 import animationData from "../assets/lotties/welcome.json"
 import Button from "../components/Button";
+import { useNavigate } from "react-router-dom";
 // import { Link } from 'react-scroll';
 
 const defaultOptions = {
@@ -95,7 +96,16 @@ const Elipse = styled.div`
 `;
 
 
+
+
 const Dashboard = () => {
+  const navigate = useNavigate();
+
+const handleLogout = () => {
+  localStorage.removeItem("token");
+  sessionStorage.removeItem("token");
+  navigate("/Login"); // Redireciona para a página de login
+};
     return (
       <>
         <Navbarui />
@@ -118,6 +128,7 @@ const Dashboard = () => {
               <Button title="Clique aqui"   bgcolor="#343A40" />
             </GroupLine>
           </GroupWelcome>
+          <button onClick={handleLogout}>Logout</button>
         </BodyGroup>
       </>
     );
