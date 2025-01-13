@@ -1,10 +1,13 @@
 import styled from "styled-components";
 import Navbarui from "../components/Navbar";
-import { getCurrentDate } from "../utils/data.jsx"; // Ajuste o caminho conforme necessário
+import { getCurrentDate } from "../utils/data"; // Ajuste o caminho conforme necessário
 import Lottie from "react-lottie";
 import animationData from "../assets/lotties/welcome.json"
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
+import BoxInsight from "../components/BoxHotkey";
+import BoxAtalhos from "../components/BoxHotkey";
+import BoxGlobal from "../components/BoxGlobal";
 // import { Link } from 'react-scroll';
 
 const defaultOptions = {
@@ -21,7 +24,7 @@ const BodyGroup = styled.div`
   margin:0;
   box-sizing: border-box;
   background-color: #F5F5F5;
-  padding-top: 80px; /* Espaço reservado para a Navbar */
+  padding-top: 20px; /* Espaço reservado para a Navbar */
   min-height: 100vh; /* Garante que o conteúdo ocupe toda a altura da tela */
   display: flex;
   flex-direction: column;
@@ -53,14 +56,16 @@ const Title = styled.h1`
 `;
 
 const Content = styled.div`
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   text-align: center;
+  margin-top:5%;
 `;
 const SmallContent = styled.div`
-font-size: 1rem;
-padding-left:10%;
-padding-right:10%;
-padding-top:1%;
+font-size: 1.1rem;
+padding-left:3%;
+padding-right:3%;
+padding-top:4%;
+padding-bottom:5%;
 text-align: center;
 color:#777777;
 `
@@ -75,7 +80,7 @@ color:#777777;
 `
 
 const GroupWelcome = styled.div`
-width:90%;
+width:80%;
 display:flex;
 justify-content:center;
 gap:7px;
@@ -139,6 +144,12 @@ const Dashboard = () => {
               <Button title="Clique aqui"   bgcolor="#343A40" />
             </GroupLine>
           </GroupWelcome>
+
+
+          <BoxAtalhos/>
+          <BoxGlobal/>
+
+
         </BodyGroup>
       </WholeSite>
     );

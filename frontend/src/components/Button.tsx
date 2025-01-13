@@ -12,7 +12,7 @@ const StyledButton = styled.button<{ bgcolor?: string; color?: string }>`
   height: 65px;
   background: #282B2F;
   color: #fff;
-  font-size: 17px;
+  font-size: 16px;
   margin-bottom: 5%;
   margin-top: 5%;
   letter-spacing: 0.5px;
