@@ -18,9 +18,10 @@ db.connect((err) => {
   }
 });
 
+
 // Rota de registro
 app.post('/Register', (req, res) => {
-  const sql = "INSERT INTO login (`name`, `email`, `password`) VALUES (?)";
+  const sql = "INSERT INTO users (`name`, `email`, `password`) VALUES (?)";
   const values = [req.body.name, req.body.email, req.body.password];
 
   db.query(sql, [values], (err, data) => {
@@ -33,7 +34,7 @@ app.post('/Register', (req, res) => {
 });
 
 app.post("/Login", (req, res) => {
-  const sql = "SELECT * FROM login WHERE `email` = ?";
+  const sql = "SELECT * FROM users WHERE `email` = ?";
 
   db.query(sql, [req.body.email], (err, data) => {
     if (err) {
@@ -55,6 +56,33 @@ app.post("/Login", (req, res) => {
     }
   });
 });
+
+
+
+app.post("/api/categories", (req, res) => {
+  const { name, typing } = req.body;
+  const userId = 1; // Substitua com o ID do usuário logado
+
+  if (!name || !typing) {
+    return res.status(400).json({ message: "Nome e tipo são obrigatórios!" });
+  }
+
+  const sql = "INSERT INTO categories (name, user_id, typing_id) VALUES (?, ?, ?)";
+  const values = [name, userId, typing];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      return res.status(500).json({ message: "Erro ao adicionar categoria" });
+    }
+    res.status(200).json({ message: "Categoria adicionada com sucesso!" });
+  });
+});
+
+app.post("/api/categories", (req, res) => {
+  console.log("Requisição recebida para adicionar categoria:", req.body);
+  // O resto do código
+});
+
 // Iniciar o servidor
 app.listen(8081, () => {
   console.log("Servidor rodando na porta 8081");

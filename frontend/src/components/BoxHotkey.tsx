@@ -2,6 +2,7 @@ import styled from "styled-components";
 import CenterIcon from "./CenterIcon";
 import { faGear, faHouse, faList, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faCreditCardAlt } from "@fortawesome/free-regular-svg-icons";
+import { Link } from "react-router-dom";
 
 const GroupWelcome = styled.div`
   width: 80%;
@@ -67,7 +68,9 @@ const BoxAtalhos = () => {
       <GroupWelcome>
         <SlideContainer>
           <InfoIcon>
+            <Link to="/Transactions">
             <CenterIcon icon={faPlus} />
+            </Link>
             <Span>Adicionar Transação</Span>
           </InfoIcon>
           <InfoIcon>
