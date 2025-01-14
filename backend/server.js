@@ -5,9 +5,8 @@ const cors = require("cors");
 
 const app = express();
 app.use(cors());
-app.use(express.json()); // Middleware para processar JSON no corpo da requisição
+app.use(express.json()); 
 
-// Configuração do banco de dados
 
 
 db.connect((err) => {
@@ -58,7 +57,6 @@ app.post("/Login", (req, res) => {
 });
 
 
-
 app.post("/api/categories", (req, res) => {
   const { name, typing } = req.body;
   const userId = 1; // Substitua com o ID do usuário logado
@@ -72,15 +70,11 @@ app.post("/api/categories", (req, res) => {
 
   db.query(sql, values, (err, result) => {
     if (err) {
-      return res.status(500).json({ message: "Erro ao adicionar categoria" });
+      console.error("Erro ao adicionar categoria:", err);  // Log detalhado do erro
+      return res.status(500).json({ message: "Erro ao adicionar categoria", error: err });
     }
     res.status(200).json({ message: "Categoria adicionada com sucesso!" });
   });
-});
-
-app.post("/api/categories", (req, res) => {
-  console.log("Requisição recebida para adicionar categoria:", req.body);
-  // O resto do código
 });
 
 // Iniciar o servidor

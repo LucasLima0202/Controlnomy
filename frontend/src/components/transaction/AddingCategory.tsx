@@ -153,14 +153,15 @@ const AddingCategory = () => {
     const [errorMessages, setErrorMessages] = useState<any>({});
 
     useEffect(() => {
-        axios.get("http://localhost:8081/api/typings")
-        .then(response => {
-          setTypings(response.data); 
-        })
-        .catch(error => {
-          console.error("Erro ao buscar os tipos", error);
-        });
-    }, []);
+        axios
+          .get("http://localhost:8081/api/typings")
+          .then((response) => {
+            setTypings(response.data); // Atualiza o estado com os tipos de categoria
+          })
+          .catch((error) => {
+            console.error("Erro ao buscar os tipos de categoria", error);
+          });
+      }, []);
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setValues({ ...values, [e.target.name]: e.target.value });
