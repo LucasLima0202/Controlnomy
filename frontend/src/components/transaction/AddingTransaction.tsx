@@ -262,7 +262,7 @@ const AddingTransaction = () => {
   
       // Recarrega a página
       window.location.reload();
-    } catch (error) {
+    } catch (error : any) {
       console.error("Erro ao adicionar Transação:", error.response?.data || error.message);
     }
   };

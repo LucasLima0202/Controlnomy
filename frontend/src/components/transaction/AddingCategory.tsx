@@ -174,7 +174,7 @@ const AddingCategory = () => {
   
         // Recarrega a página
         window.location.reload();
-      } catch (error) {
+      } catch (error: any) {
         console.error("Erro ao adicionar categoria:", error.response?.data || error.message);
       }
     } else {
