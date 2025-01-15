@@ -1,8 +1,10 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getCurrentDate } from "../../utils/data";
+import useAddingTransactionValidation from "../../hooks/AddTransaction";
+import axios from "axios";
 
 const GroupWelcome = styled.div`
   width: 80%;
@@ -91,8 +93,6 @@ const Input = styled.input`
   border-radius: 5px;
 `;
 
-
-
 const Button = styled.button`
   outline: none;
   border: none;
@@ -127,7 +127,6 @@ const Dropdown = styled.select`
   background-color: rgba(255, 255, 255, 0.2);
   font-size: 16px;
   color: #6F6F6F;
-  
 `;
 
 const RadioContainer = styled.div`
@@ -189,48 +188,92 @@ align-items:stretch;
 align-self:stretch;
 flex-flow:column nowrap;`
 
-const AddindTransaction = () => {
+interface TransactionData {
+  value: number;
+  type: boolean;  // Agora é um booleano
+  category: string;
+  description: string;
+}
 
-    const [values, setValues] = useState({
-        value: "",
-        type: "GAIN",
+const AddingTransaction = () => {
+  const [values, setValues] = useState<TransactionData>({
+    value: 0,
+    type: false,
+    category: "",
+    description: "",
+  });
+
+  const [errors, setErrors] = useState<any>({});
+  const { validate } = useAddingTransactionValidation();
+  const [categories, setCategories] = useState<any[]>([]);
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setValues({
+      ...values,
+      [name]: name === "value" ? parseFloat(value) : name === "category" ? parseInt(value) : value,
+    });
+  };
+  
+
+  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValues({ ...values, type: e.target.value === "true" });
+  };
+  
+
+  useEffect(() => {
+    axios.get("http://localhost:8081/api/categories")
+      .then((response) => {
+        setCategories(response.data);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar categorias:", error);
+      });
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    const validationErrors = validate(values);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+  
+    console.log("Valores enviados ao backend:", values);
+  
+    try {
+      const response = await axios.post("http://localhost:8081/api/transaction", {
+        value: values.value,
+        type: values.type, // Deve ser boolean: true ou false
+        category: parseInt(values.category), // Converte categoria para número
+        description: values.description,
+      });
+      alert(response.data.message);
+  
+      // Resetando os valores do formulário
+      setValues({
+        value: 0,
+        type: false,
         category: "",
         description: "",
       });
-      const [errors, setErrors] = useState({});
-      const [categories, setCategories] = useState([]); // Categoria vem do banco de dados
-    
-      const handleInput = (event: any) => {
-        setValues({ ...values, [event.target.name]: event.target.value });
-      };
-    
-      const handleRadioChange = (event: any) => {
-        setValues({ ...values, type: event.target.value });
-      };
-    
-      const handleCategoryChange = (event: any) => {
-        setValues({ ...values, category: event.target.value });
-      };
-    
-      const handleSubmit = (event: any) => {
-        event.preventDefault();
-        // Validação pode ser feita aqui
-        if (!values.value || !values.type || !values.category || !values.description) {
-          setErrors({ message: "Todos os campos são obrigatórios." });
-        } else {
-          // Enviar os dados para o backend aqui
-          console.log("Enviando dados: ", values);
-        }
-      };
-    return(
-        <GroupWelcome>
-        <GroupLine>
-          <Title>Adicionar Transação do Dia</Title>
-          <DateContent>{getCurrentDate()}</DateContent>
-
-          <SectionForm>
-            <Form onSubmit={handleSubmit}>
-              <Row>
+      setErrors({});
+  
+      // Recarrega a página
+      window.location.reload();
+    } catch (error) {
+      console.error("Erro ao adicionar Transação:", error.response?.data || error.message);
+    }
+  };
+  return (
+    <GroupWelcome>
+      <GroupLine>
+        <Title>Adicionar Transação do Dia</Title>
+        <DateContent>{getCurrentDate()}</DateContent>
+        <SectionForm>
+          <Form onSubmit={handleSubmit}>
+            <Row>
               <ContainerLabel>
                 <Label id="value">Valor</Label>
               </ContainerLabel>
@@ -239,50 +282,60 @@ const AddindTransaction = () => {
                 type="number"
                 placeholder="Digite o valor da transação"
                 name="value"
+                value={values.value || ""}
               />
-              </Row>
+              {errors.value && <ErrorSpan>{errors.value}</ErrorSpan>}
+            </Row>
 
-              <ContainerLabel>
-                <Label id="type">Tipo de Transação</Label>
-              </ContainerLabel>
-              <RadioContainer>
-        <RadioLabel>
-          <RadioInput
-            type="radio"
-            name="type"
-            value="GAIN"
-            checked={values.type === "GAIN"}
-            onChange={handleRadioChange}
-          />
-          <CustomRadio />
-          Ganho
-        </RadioLabel>
-        <RadioLabel>
-          <RadioInput
-            type="radio"
-            name="type"
-            value="EXPENSE"
-            checked={values.type === "EXPENSE"}
-            onChange={handleRadioChange}
-          />
-          <CustomRadio />
-          Despesa
-        </RadioLabel>
-      </RadioContainer>
-              <Row>
+            <ContainerLabel>
+              <Label id="type">Tipo de Transação</Label>
+            </ContainerLabel>
+            <RadioContainer>
+              <RadioLabel>
+                <RadioInput
+                  type="radio"
+                  name="type"
+                  value="false"
+                  checked={!values.type}
+                  onChange={handleRadioChange}
+                />
+                <CustomRadio />
+                Ganho
+              </RadioLabel>
+              <RadioLabel>
+                <RadioInput
+                  type="radio"
+                  name="type"
+                  value="true"
+                  checked={values.type}
+                  onChange={handleRadioChange}
+                />
+                <CustomRadio />
+                Despesa
+              </RadioLabel>
+            </RadioContainer>
+            {errors.type && <ErrorSpan>{errors.type}</ErrorSpan>}
+
+            <Row>
               <ContainerLabel>
                 <Label id="category">Categoria</Label>
               </ContainerLabel>
-              <Dropdown onChange={handleCategoryChange} value={values.category} name="category">
+              <Dropdown
+                onChange={handleInput}
+                value={values.category}
+                name="category"
+              >
                 <option value="">Selecione a categoria</option>
-                {/* {categories.map((category) => (
+                {categories.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
-                ))} */}
-              </Dropdown> 
-              </Row>
-              <Row>
+                ))}
+              </Dropdown>
+              {errors.category && <ErrorSpan>{errors.category}</ErrorSpan>}
+            </Row>
+
+            <Row>
               <ContainerLabel>
                 <Label id="description">Descrição</Label>
               </ContainerLabel>
@@ -291,18 +344,21 @@ const AddindTransaction = () => {
                 type="text"
                 placeholder="Descrição da transação"
                 name="description"
+                value={values.description}
               />
-              </Row>
+            </Row>
 
-              {/* {errors.message && <ErrorSpan>{errors.message}</ErrorSpan>} */}
-              <Row>
+            <Row>
+              <Button type="submit">
+                <FontAwesomeIcon icon={faPlus} color="#FFFFFF" fontSize={18} />
+                Adicionar Transação
+              </Button>
+            </Row>
+          </Form>
+        </SectionForm>
+      </GroupLine>
+    </GroupWelcome>
+  );
+};
 
-              <Button type="submit"><FontAwesomeIcon icon={faPlus} color="#FFFFFF" fontSize={18}/> Adicionar Transação</Button>
-              </Row>
-            </Form>
-          </SectionForm>
-        </GroupLine>
-      </GroupWelcome>
-    )
-}
-export default AddindTransaction;
+export default AddingTransaction;

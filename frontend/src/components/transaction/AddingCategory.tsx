@@ -110,21 +110,7 @@ const Dropdown = styled.select`
   }
   
 `;
-const DropdownIcon = styled.select`
-  height: 55px;
-  width:50%;
-  border-radius: 5px;
-  padding-left: 10px;
-  border: solid 1px #D9D9D9;
-  background-color: rgba(255, 255, 255, 0.2);
-  font-size: 16px;
-  color: #6F6F6F;
-  
-  &:focus{
-    outline:none;
-  }
-  
-`;
+
 const Column = styled.div`
 display:flex;
 align-items:stretch;
@@ -144,46 +130,58 @@ color: #960707;
 
 const AddingCategory = () => {
 
-    const [values, setValues] = useState({
-        name: "",
-        typing: "",
+  const [values, setValues] = useState({
+    name: "",
+    typing: "",
+  });
+  const { validate, errors } = useAddingCategoryValidation();
+  const [typings, setTypings] = useState<any[]>([]);
+  const [errorMessages, setErrorMessages] = useState<any>({});
+
+  useEffect(() => {
+    axios.get("http://localhost:8081/api/typing") // Alterado para o endpoint correto
+      .then((response) => {
+        setTypings(response.data); // Atualiza o estado com os typings
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar os tipos de categoria", error);
+      });
+  }, []);
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setValues({
+      ...values,
+      [name]: name === "typing" ? parseInt(value) : value, // Converte "typing" para número
     });
-    const {validate, errors} = useAddingCategoryValidation();
-    const [typings, setTypings] = useState<any[]>([]);
-    const [errorMessages, setErrorMessages] = useState<any>({});
+  };
+  
 
-    useEffect(() => {
-        axios
-          .get("http://localhost:8081/api/typings")
-          .then((response) => {
-            setTypings(response.data); // Atualiza o estado com os tipos de categoria
-          })
-          .catch((error) => {
-            console.error("Erro ao buscar os tipos de categoria", error);
-          });
-      }, []);
-
-    const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setValues({ ...values, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        
-        const validationErrors = validate(values);
-        
-        if (Object.keys(validationErrors).length === 0) {
-          try {
-            await axios.post("http://localhost:8081/api/categories", values);
-            alert("Categoria adicionada com sucesso!");
-            setValues({ name: "", typing: "" });
-          } catch (error) {
-            console.error("Erro ao adicionar categoria: ", error);
-          }
-        } else {
-          setErrorMessages(validationErrors);
-        }
-    };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    const validationErrors = validate(values);
+  
+    console.log("Valores enviados para o backend:", values);
+  
+    if (Object.keys(validationErrors).length === 0) {
+      try {
+        const response = await axios.post("http://localhost:8081/api/addcategories", values);
+        alert(response.data.message);
+  
+        // Reseta os valores do formulário
+        setValues({ name: "", typing: "" });
+  
+        // Recarrega a página
+        window.location.reload();
+      } catch (error) {
+        console.error("Erro ao adicionar categoria:", error.response?.data || error.message);
+      }
+    } else {
+      setErrorMessages(validationErrors);
+    }
+  };
+  
 
   return (
     <GroupWelcome>
@@ -225,6 +223,7 @@ const AddingCategory = () => {
                   </option>
                 ))}
               </Dropdown>
+
               {errorMessages.typing && <ErrorSpan>{errorMessages.typing}</ErrorSpan>}
             </Column>
           </Form>
