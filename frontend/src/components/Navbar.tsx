@@ -3,6 +3,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
+
 // Estilos utilizando styled-components
 const NavbarContainer = styled.nav`
   display: flex;
@@ -196,7 +197,7 @@ const handleLogout = () => {
           <span></span>
           <span></span>
         </HamburgerMenu>
-        <Title>OVERVIEW</Title>
+        <Title>    <img src="/svg/LogoBig.svg" alt="Logo" /></Title>
         <Avatar>A</Avatar>
       </NavbarContainer>
 
