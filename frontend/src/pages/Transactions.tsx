@@ -6,6 +6,8 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddindTransaction from "../components/transaction/AddingTransaction";
 import AddingCategory from "../components/transaction/AddingCategory";
+import AddingOldTransaction from "../components/transaction/AddingOldTransaction";
+import ListTransaction from "../components/transaction/ListTransaction";
 
 // Estilos
 const Body = styled.body`
@@ -46,7 +48,9 @@ const Transactions = () => {
       <Navbar />
       <Section>
         <AddindTransaction/>
+        <AddingOldTransaction/>
         <AddingCategory/>
+        <ListTransaction/>
       </Section>
     </Body>
   );

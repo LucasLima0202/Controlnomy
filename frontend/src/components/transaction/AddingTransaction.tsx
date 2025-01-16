@@ -113,6 +113,10 @@ const Button = styled.button`
   &:hover {
     box-shadow: 0 0 100px rgba(131, 131, 131, 0.767);
   }
+  @media (max-width: 568px) {
+  font-size:0.8rem;
+  width:100%;
+  }
 `;
 
 const ErrorSpan = styled.span`
@@ -351,7 +355,7 @@ const AddingTransaction = () => {
             <Row>
               <Button type="submit">
                 <FontAwesomeIcon icon={faPlus} color="#FFFFFF" fontSize={18} />
-                Adicionar Transação
+                ㅤAdicionar Transação
               </Button>
             </Row>
           </Form>
