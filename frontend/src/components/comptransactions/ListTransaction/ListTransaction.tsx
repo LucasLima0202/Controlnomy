@@ -87,7 +87,7 @@ const TransactionList = () => {
               : faSmile; // Se não encontrar categoria, exibe ícone padrão
 
             return (
-              <Row key={transaction.id}>
+              <Row key={transaction.id} >
                 <SepIcon>
                   <Icon>
                     <FontAwesomeIcon

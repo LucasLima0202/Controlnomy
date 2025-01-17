@@ -59,6 +59,69 @@ module.exports = router;
 
 
 
+router.delete("/transaction/:id", (req, res) => {
+  const { id } = req.params; // Obtém o ID da transação a ser excluída do parâmetro da URL
+  
+  console.log("ID da transação a ser excluída:", id);
+
+  // Verifica se o ID foi fornecido
+  if (!id) {
+    return res.status(400).json({ message: "ID da transação é obrigatório!" });
+  }
+
+  // SQL para deletar a transação
+  const sql = "DELETE FROM transactions WHERE id = ?";
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error("Erro ao excluir transação no banco:", err);
+      return res.status(500).json({ message: "Erro ao excluir transação", error: err });
+    }
+
+    // Verifica se a transação foi encontrada e excluída
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Transação não encontrada" });
+    }
+
+    // Retorna uma mensagem de sucesso
+    res.status(200).json({ message: "Transação excluída com sucesso!" });
+  });
+});
+
+router.put("/transaction/:id", (req, res) => {
+  const { value, description, type, category } = req.body;
+  const transactionId = req.params.id;
+
+  // Verificação de parâmetros
+  if (!value || !description || !type || !category) {
+    return res.status(400).json({ message: "Todos os campos são obrigatórios!" });
+  }
+
+  // Verificar tipo de transação (1 = Despesa, 0 = Ganho)
+  const transactionType = type === 'Despesa' ? 1 : 0;
+
+  const sql = `
+    UPDATE transactions
+    SET amount = ?, description = ?, type = ?, category_id = ?, date = ?
+    WHERE id = ?;
+  `;
+  const values = [value, description, transactionType, category, new Date().toISOString().slice(0, 10), transactionId];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Erro ao atualizar transação no banco:", err);
+      return res.status(500).json({ message: "Erro ao atualizar transação", error: err });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Transação não encontrada" });
+    }
+
+    res.status(200).json({ message: "Transação atualizada com sucesso!" });
+  });
+});
+
+
 
 router.get("/transactionslist", (req, res) => {
   const sql = "SELECT * FROM transactions ORDER BY date DESC LIMIT 10"; // Ordena por data, as mais recentes primeiro

@@ -169,6 +169,9 @@ gap:7px;
 flex-flow: Row;
 justify-content:flex-start;
 padding:3%;
+transition: all ease-in-out 0.2s;
+
+
 `
 const Column = styled.div`
 display:flex;

@@ -31,12 +31,12 @@ border-radius: 8px;
 `
 
 
-const BoxGlobal = () => {
+const BoxGlobal = ({children}: any) => {
     return (
         <>
             <GroupWelcome>
                 <GroupLine>
-                
+                    {children}
                 </GroupLine>
             </GroupWelcome>
 
