@@ -16,16 +16,16 @@ router.get("/categories", (req, res) => {
 
 // Rota para adicionar categorias
 router.post("/addcategories", (req, res) => {
-  const { name, typing } = req.body;
+  const { name, typing, icon } = req.body;
 
-  console.log("Dados recebidos no backend:", { name, typing });
+  console.log("Dados recebidos no backend:", { name, typing, icon });
 
-  if (!name || !Number.isInteger(typing)) {
-    return res.status(400).json({ message: "Nome e tipo (ID numérico) são obrigatórios!" });
+  if (!name || !Number.isInteger(typing) || !icon) {
+    return res.status(400).json({ message: "Nome, tipo (ID numérico) e ícone são obrigatórios!" });
   }
 
-  const sql = "INSERT INTO categories (name, user_id, typing_id) VALUES (?, ?, ?)";
-  const values = [name, 1, typing];
+  const sql = "INSERT INTO categories (name, user_id, typing_id, icon) VALUES (?, ?, ?, ?)";
+  const values = [name, 1, typing, icon];  // Aqui estamos agora passando o nome do ícone ao invés de um ID.
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -35,5 +35,6 @@ router.post("/addcategories", (req, res) => {
     res.status(200).json({ message: "Categoria adicionada com sucesso!" });
   });
 });
+
 
 module.exports = router;

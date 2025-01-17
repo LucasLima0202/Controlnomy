@@ -1,13 +1,14 @@
 // Importações necessárias
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 
 // Estilos utilizando styled-components
 const NavbarContainer = styled.nav`
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
   padding: 1rem 2rem;
   gap:3rem;
@@ -133,7 +134,9 @@ const Avatar = styled.div`
   cursor: pointer;
 `;
 
-const DropdownMenu = styled.div<{ isOpen: boolean }>`
+const DropdownMenu = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "isOpen",
+})<{ isOpen: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -148,13 +151,15 @@ const DropdownMenu = styled.div<{ isOpen: boolean }>`
   padding: 2rem;
   z-index: 999;
 `;
-
 const DropdownItem = styled.a`
   color: white;
   text-decoration: none;
+  font-weight:600;
+  text-transform:uppercase;
+  text-align:center;
   font-family: "Poppins", sans-serif;
-  padding-top:5%;
-  font-size: 1.2rem;
+  padding-top:9%;
+  font-size: 1.1rem;
   margin-bottom: 1rem;
   &:hover {
     color: #aaa;
@@ -172,49 +177,55 @@ const CloseButton = styled.div`
   }
 `;
 
-// Componente Navbar
+const Logo = styled.img`
+width:100%;
+@media (max-width: 568px) {
+  margin-top:2%;
+  width:90%;
+  }
+`;
+
 const Navbar = () => {
-  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleToggleMenu = () => {
     setMenuOpen((prev) => !prev);
   };
-  
-
-const handleLogout = () => {
-  localStorage.removeItem("token");
-  sessionStorage.removeItem("token");
-  navigate("/Login"); // Redireciona para a página de login
-};
-
+  const handleLogout = () => {
+    // Lógica para logout
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    console.log("Logout realizado.");
+  };
   return (
     <>
-      {/* Navbar principal */}
       <NavbarContainer>
-        <HamburgerMenu onClick={handleToggleMenu} className={menuOpen ? "active" : ""}>
+        <HamburgerMenu
+          onClick={handleToggleMenu}
+          className={menuOpen ? "active" : ""}
+        >
           <span></span>
           <span></span>
           <span></span>
         </HamburgerMenu>
-        <Title>    <img src="/svg/LogoBig.svg" alt="Logo" /></Title>
-        <Avatar>A</Avatar>
+        <Title>
+          <Logo src="/svg/LogoBig.svg" alt="Logo" />
+        </Title>
+        <Avatar>?</Avatar>
       </NavbarContainer>
-
-      {/* Dropdown menu */}
       <DropdownMenu isOpen={menuOpen}>
         <CloseButton onClick={handleToggleMenu}>×</CloseButton>
         <DropdownItem href="#" onClick={handleToggleMenu}>
-          <Itens>Home</Itens>
+          Home
         </DropdownItem>
         <DropdownItem href="#" onClick={handleToggleMenu}>
-          <Itens>Dashboard</Itens>
+          Dashboard
         </DropdownItem>
         <DropdownItem href="#" onClick={handleToggleMenu}>
-          <Itens>Settings</Itens>
+          Settings
         </DropdownItem>
         <DropdownItem onClick={handleLogout}>
-          <ButtonLogout onClick={handleLogout}>Logout</ButtonLogout>
+          <ButtonLogout>Logout</ButtonLogout>
         </DropdownItem>
       </DropdownMenu>
     </>

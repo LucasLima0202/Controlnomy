@@ -1,7 +1,11 @@
 const express = require("express");
 const db = require("../db/connection");
-const router = express.Router();
+const cors = require("cors");
 
+const router = express.Router();
+const app = express();
+app.use(cors());
+app.use(express.json());
 // Rota de registro
 router.post("/register", (req, res) => {
   const sql = "INSERT INTO users (`name`, `email`, `password`) VALUES (?)";
@@ -15,6 +19,10 @@ router.post("/register", (req, res) => {
     res.status(201).json({ message: "Usuário registrado com sucesso!" });
   });
 });
+
+
+
+
 
 // Rota de login
 router.post("/login", (req, res) => {

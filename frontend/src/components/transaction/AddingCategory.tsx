@@ -1,9 +1,29 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBell, faCartShopping, faDumbbell, faFilm, faHandHoldingHeart, faHandshake, faIcons, faMountainSun, faMusic, faPassport, faPlus, faShield, faUserMinus, faUserPlus, faUtensils, faVolleyball } from "@fortawesome/free-solid-svg-icons";
 import useAddingCategoryValidation from "../../hooks/AddCategoryValidation";
 import axios from "axios";
+import { faSmile } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+
+const iconOptions = [
+  { id: 1, name: "Alimentação", icon: faUtensils },
+  { id: 2, name: "Assinatura", icon: faBell },
+  { id: 3, name: "Compras", icon: faCartShopping },
+  { id: 4, name: "Academia", icon: faDumbbell },
+  { id: 5, name: "Vôlei", icon: faVolleyball },
+  { id: 6, name: "Musica", icon: faMusic },
+  { id: 7, name: "Proteção", icon: faShield },
+  { id: 8, name: "Filme", icon: faFilm },
+  { id: 9, name: "Contrato", icon: faHandshake },
+  { id: 10, name: "Pagamento", icon: faUserMinus },
+  { id: 11, name: "Recebimento", icon: faUserPlus },
+  { id: 12, name: "Passeio", icon: faMountainSun },
+  { id: 13, name: "Viagem", icon: faPassport },
+  { id: 14, name: "Presente", icon: faHandHoldingHeart },
+  { id: 15, name: "Outros", icon: faIcons },
+];
 
 const GroupWelcome = styled.div`
   width: 80%;
@@ -110,6 +130,14 @@ const Dropdown = styled.select`
   }
   
 `;
+const IconGroup = styled.div`
+display:flex;
+justify-content:center;
+background-color:#343A40;
+border-radius: 5px;
+width:40%;
+align-items: center;
+`;
 
 const Column = styled.div`
 display:flex;
@@ -128,11 +156,18 @@ font-size: 14px;
 color: #960707;
 `
 
+
+const ApresentIcon = styled.span`
+font-size: 20px;
+color: #ffffff;
+`
+
 const AddingCategory = () => {
 
   const [values, setValues] = useState({
     name: "",
     typing: "",
+    iconId: "",
   });
   const { validate, errors } = useAddingCategoryValidation();
   const [typings, setTypings] = useState<any[]>([]);
@@ -166,12 +201,15 @@ const AddingCategory = () => {
   
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const response = await axios.post("http://localhost:8081/api/addcategories", values);
+        const iconName = iconOptions.find(icon => icon.id === parseInt(values.iconId))?.name || "defaultIcon"; // Ajuste para pegar o nome do ícone
+        const response = await axios.post("http://localhost:8081/api/addcategories", {
+          ...values,
+          icon: iconName,  // Passando o nome do ícone e não o ID
+        });
         alert(response.data.message);
   
         // Reseta os valores do formulário
-        setValues({ name: "", typing: "" });
-  
+        setValues({ name: "", typing: "", iconId: "" });  
         // Recarrega a página
         window.location.reload();
       } catch (error: any) {
@@ -181,7 +219,6 @@ const AddingCategory = () => {
       setErrorMessages(validationErrors);
     }
   };
-  
 
   return (
     <GroupWelcome>
@@ -223,6 +260,37 @@ const AddingCategory = () => {
                   </option>
                 ))}
               </Dropdown>
+
+              {errorMessages.typing && <ErrorSpan>{errorMessages.typing}</ErrorSpan>}
+            </Column>
+
+            <Column>
+              <Row>
+                <ContainerLabel>
+                  <Label id="type">Icone da Categoria</Label>
+                </ContainerLabel>
+              </Row>
+              <Row>
+
+              <Dropdown name="iconId" value={values.iconId} onChange={handleInput}>
+            <option value="">Selecione um Ícone</option>
+            {iconOptions.map((icon) => (
+              <option key={icon.id} value={icon.id}>
+                {icon.name}
+              </option>
+            ))}
+          </Dropdown>
+          <IconGroup>
+
+          <ApresentIcon>
+            {values.iconId && (
+              <FontAwesomeIcon
+                icon={iconOptions.find((icon) => icon.id === parseInt(values.iconId))?.icon || faSmile}
+              />
+            )}
+          </ApresentIcon>
+          </IconGroup>
+              </Row>
 
               {errorMessages.typing && <ErrorSpan>{errorMessages.typing}</ErrorSpan>}
             </Column>

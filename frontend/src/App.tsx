@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { useAuth } from "./context/AuthContext";
 import Transactions from "./pages/Transactions";
+import EditTransactions from "./pages/EditTransactions";
 
 const App: React.FC = () => {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
@@ -23,6 +24,7 @@ const App: React.FC = () => {
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/Transactions" element={<Transactions />}/>
+        <Route path="/EditTransactions" element={<EditTransactions/>}/>
         <Route path="/Dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/Login" />} />
       </Routes>
     </BrowserRouter>

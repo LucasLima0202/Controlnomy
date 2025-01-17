@@ -1,14 +1,41 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faQuestionCircle, faSmile } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { formatNumber } from "../../utils/formatnumber";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBell, faCartShopping, faDumbbell, faFilm, faHandHoldingHeart, faHandshake, faIcons, faMountainSun, faMusic, faPassport, faPlus, faShield, faUserMinus, faUserPlus, faUtensils, faVolleyball } from "@fortawesome/free-solid-svg-icons";
+import { faImage } from "@fortawesome/free-regular-svg-icons";
+
+
+
+
+const categoryIconMapping: { [key: string]: any } = {
+  "Alimentação": faUtensils,
+  "Assinatura": faBell,
+  "Compras": faCartShopping,
+  "Academia": faDumbbell,
+  "Vôlei": faVolleyball,
+  "Musica": faMusic,
+  "Proteção": faShield,
+  "Filme": faFilm,
+  "Contrato": faHandshake,
+  "Pagamento": faUserMinus,
+  "Recebimento": faUserPlus,
+  "Passeio": faMountainSun,
+  "Viagem": faPassport,
+  "Presente": faHandHoldingHeart,
+  "Outros": faIcons,
+};
+
 
 const Container = styled.div`
   width: 90%;
   margin: 0 auto;
   text-align: center;
+  justify-content:stretch;
+
 `;
 
 const GroupWelcome = styled.div`
@@ -112,19 +139,106 @@ const Title = styled.h1`
   }
 `;
 
+const TitleFormat = styled.h1`
+  font-size: 1rem;
+  color: #343A40;
+  font-weight: 600;
+  text-transform:capitalize;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+`;
+
+
+const Icon = styled.div`
+background-color: #343A40;
+width: 55px;
+height: 55px;
+display:flex;
+justify-content:center;
+align-items:center;
+border-radius:4px;
+`
+const Price = styled.p`
+  color: ${(props) => (props.type === "Despesa" ? "red" : "green")};
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
+`;
+const SepIcon = styled.div`
+display:flex;
+width:30%;
+`
+
+const SepPrice = styled.div`
+display:flex;
+justify-content:center;
+align-items:center;
+width:60%;
+flex-direction:column-reverse;
+margin:0;
+`
+
+const Septext = styled.div`
+display:flex;
+width:100%;
+margin-top:4%;
+justify-content:flex-start;
+flex-flow: column nowrap;
+
+`
+
+const Row = styled.div`
+display:flex;
+gap:7px;
+flex-flow: Row;
+justify-content:flex-start;
+padding:3%;
+`
+const Column = styled.div`
+display:flex;
+align-items:flex-start;
+width:100%;
+flex-flow: column;
+`
+const Dateinfo = styled.p`
+color: #718EBF;
+font-size: 1.1rem;
+font-weight: 400;
+margin:0;
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+`
+
 const TransactionList = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Faz uma requisição ao backend
-    axios
-      .get("http://localhost:8081/api/transactionslist")
-      .then((response) => {
-        setTransactions(response.data); // Salva os dados na state
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar transações:", error);
-      });
+    const fetchTransactionsAndCategories = async () => {
+      try {
+        setLoading(true);
+        const [transactionsResponse, categoriesResponse] = await Promise.all([
+          axios.get("http://localhost:8081/api/transactionslist"),
+          axios.get("http://localhost:8081/api/categories"),
+        ]);
+        setTransactions(transactionsResponse.data);
+        setCategories(categoriesResponse.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactionsAndCategories();
   }, []);
 
   return (
@@ -132,37 +246,47 @@ const TransactionList = () => {
       <GroupLine>
         <Container>
           <Title>Últimas Transações</Title>
-          <StyledTable>
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Descrição</th>
-                  <th>Valor</th>
-                  <th>Tipo</th>
-                  <th>Data</th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map((transaction) => (
-                  <tr key={transaction.id}>
-                    <td>{transaction.id}</td>
-                    <td>{transaction.description}</td>
-                    <td>{transaction.amount}</td>
-                    <td>{transaction.type === 1 ? "Despesa" : "Ganho"}</td>
-                    <td>{new Date(transaction.date).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </StyledTable>
+          {transactions.map((transaction) => {
+            const formattedAmount = formatNumber(transaction.amount);
+            const category = categories.find(
+              (cat) => cat.id === transaction.category_id // Verifica se o ID da categoria corresponde ao da transação
+            );
+
+            const icon = category
+              ? categoryIconMapping[category.icon] || faImage // Busca o ícone pelo nome da categoria
+              : faSmile; // Se não encontrar categoria, exibe ícone padrão
+
+            return (
+              <Row key={transaction.id}>
+                <SepIcon>
+                  <Icon>
+                    <FontAwesomeIcon
+                      icon={icon} // Usa o ícone mapeado
+                      color="#FFFFFF"
+                      fontSize={18}
+                    />
+                  </Icon>
+                </SepIcon>
+                <Septext>
+                  <Column>
+                    <TitleFormat>{transaction.description}</TitleFormat>
+                    <Dateinfo>{new Date(transaction.date).toLocaleDateString()}</Dateinfo>
+                  </Column>
+                </Septext>
+                <SepPrice>
+                  <Price type={transaction.type === 1 ? "Despesa" : "Ganho"}>
+                    R${formattedAmount}
+                  </Price>
+                </SepPrice>
+              </Row>
+            );
+          })}
           <Link to={"/EditTransactions"}>
             <Button type="submit">
-                          <FontAwesomeIcon icon={faEdit} color="#FFFFFF" fontSize={18} />
-                          ㅤEditar Transação
+              <FontAwesomeIcon icon={faEdit} color="#FFFFFF" fontSize={18} />
+              ㅤEditar Transação
             </Button>
           </Link>
-            
         </Container>
       </GroupLine>
     </GroupWelcome>
