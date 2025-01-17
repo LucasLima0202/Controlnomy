@@ -4,10 +4,10 @@ import { getCurrentDate } from "../utils/data";
 import { useState } from "react";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import AddindTransaction from "../components/transaction/AddingTransaction";
-import AddingCategory from "../components/transaction/AddingCategory";
-import AddingOldTransaction from "../components/transaction/AddingOldTransaction";
-import ListTransaction from "../components/transaction/ListTransaction";
+import AddingOldTransaction from "../components/comptransactions/AddingOldTransaction";
+import AddingTransaction from "../components/comptransactions/AddingTransaction";
+import AddingCategory from "../components/comptransactions/AddingCategory";
+import TransactionList from "../components/comptransactions/ListTransaction";
 
 // Estilos
 const Body = styled.body`
@@ -47,10 +47,10 @@ const Transactions = () => {
     <Body>
       <Navbar />
       <Section>
-        <AddindTransaction/>
+        <AddingTransaction/>
         <AddingOldTransaction/>
         <AddingCategory/>
-        <ListTransaction/>
+        <TransactionList/>
       </Section>
     </Body>
   );
