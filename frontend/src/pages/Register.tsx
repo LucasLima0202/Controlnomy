@@ -183,7 +183,7 @@ const handleSubmit = async (event: React.FormEvent) => {
 
   if (!validationErrors.name && !validationErrors.email && !validationErrors.password) {
     try {
-      const res = await axios.post('http://localhost:8081/Register', values);
+      const res = await axios.post('http://localhost:8081/api/Register', values);
       console.log(res.data);
       navigate('/')
     } catch (err) {

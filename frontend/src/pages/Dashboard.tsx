@@ -55,19 +55,26 @@ const Title = styled.h1`
   margin-bottom: 20px;
 `;
 
-const Content = styled.div`
-  font-size: 1.2rem;
+const Content = styled.h1`
+  font-size: 1.5rem;
   text-align: center;
-  margin-top:5%;
+  color: #343A40;
+  font-weight: 600;
+  margin-bottom: 1%;
+  margin-top:1%;
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
 `;
 const SmallContent = styled.div`
-font-size: 1.1rem;
-padding-left:3%;
-padding-right:3%;
-padding-top:4%;
-padding-bottom:5%;
-text-align: center;
-color:#777777;
+  font-size: 1.2rem;
+  text-align: center;
+  color: #4b4b4b;
+  line-height:30px;
+  margin-top:1%;
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `
 
 const DateContent = styled.div`
@@ -137,11 +144,11 @@ const Dashboard = () => {
               <Elipse>
                 <Lottie options={defaultOptions} height={120} width={80} />
               </Elipse>
-              <Content>Aqui está o conteúdo do seu dashboard.</Content>
+              <Content>Aqui está o conteúdo do seu Dashboard.</Content>
               <SmallContent>
-                Para começarmos a monitorar insira os dados da transação
+                Para começarmos a monitorar insira os dados da sua renda
               </SmallContent>
-              <Button title="Clique aqui"   bgcolor="#343A40" />
+              <Button title="Clique aqui"   bgcolor="#343A40" fontsize="0.9rem"/>
             </GroupLine>
           </GroupWelcome>
 

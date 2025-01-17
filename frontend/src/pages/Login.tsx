@@ -201,7 +201,7 @@ const Login = () => {
     if (!validationErrors.email && !validationErrors.password) {
       try {
         console.log("Enviando dados para o backend:", values); // Log para debug
-        const res = await axios.post("http://localhost:8081/Login", values);
+        const res = await axios.post("http://localhost:8081/api/Login", values);
   
         if (res.status === 200 && res.data.message === "Sucesso") {
           console.log("Login bem-sucedido. Redirecionando...");
