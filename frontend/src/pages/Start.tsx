@@ -4,6 +4,8 @@ import FormWizard from "react-form-wizard-component";
 import "react-form-wizard-component/dist/style.css";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import GetStartHereValidation from "../hooks/StartHereValidation";
 
 const Body = styled.body`
   width: 100%;
@@ -31,10 +33,11 @@ const Section = styled.section`
   justify-content: flex-start;
   color: #343A40;
 `;
-const ErrorSpan = styled.span`
+const ErrorSpan = styled.span<{ visible: boolean }>`
   color: #960707;
-  font-size: 0.8rem;
+  font-size: 0.98rem;
   margin-top: 5px;
+  visibility: ${(props) => (props.visible ? "visible" : "hidden")}; /* Controla a visibilidade */
 `;
 
 const Content = styled.div`
@@ -131,12 +134,12 @@ interface Errors {
   releasedPercentage?: string;
   investmentPercentage?: string;
 }
-
-const StartHere = () => {
-  const [firstTabInput, setFirstTabInput] = useState<string>("");
+const StartHereForm = () => {
+  const [firstTabInput, setFirstTabInput] = React.useState<string>("");
   const [releasedPercentage, setReleasedPercentage] = useState<string>(""); // Valor liberado (%)
   const [investmentPercentage, setInvestmentPercentage] = useState<string>(""); // Investimento (%)
   const [errors, setErrors] = useState<Errors>({});
+  const [isVisible, setIsVisible] = useState(false); // Começa invisível
   const navigate = useNavigate();
 
   const handleComplete = () => {
@@ -148,35 +151,24 @@ const StartHere = () => {
     navigate("/Transactions");
   };
 
-  const validateTab1 = () => {
-    const newErrors: Errors = {};
-    if (!firstTabInput || parseFloat(firstTabInput) <= 0) {
-      newErrors.firstTabInput = "Por favor, insira um valor válido para a conta.";
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const checkValidateTab = () => {
+    return firstTabInput.trim() !== ""; // Verifica se o input não está vazio
   };
 
-  const validateTab2 = () => {
-    const newErrors: Errors = {};
-    const released = parseFloat(releasedPercentage || "0");
-    if (!released || released <= 0 || released > 100) {
-      newErrors.releasedPercentage = "Por favor, insira uma porcentagem válida (0-100).";
+  const handleValidationError = () => {
+    if (!checkValidateTab()) {
+      setIsVisible(true); // Exibe a mensagem de erro
+    } else {
+      setIsVisible(false); // Esconde a mensagem de erro se o input for válido
     }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
-  const validateTab3 = () => {
-    const newErrors: Errors = {};
-    const released = parseFloat(releasedPercentage || "0");
-    const investment = parseFloat(investmentPercentage || "0");
-
-    if (!investment || investment <= 0 || investment > 100 - released) {
-      newErrors.investmentPercentage = `Por favor, insira uma porcentagem válida (0-${100 - released}%).`;
+  const handleNextClick = () => {
+    if (!checkValidateTab()) {
+      handleValidationError();
+    } else {
+      setIsVisible(false);
     }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
   return (
@@ -186,7 +178,6 @@ const StartHere = () => {
           <FormWizard.TabContent
             title="Registrar Conta"
             icon="fa fa-user"
-            validateTab={validateTab1}
           >
             <Column>
               <Title>Vamos começar registrando o valor da sua conta atual</Title>
@@ -203,15 +194,16 @@ const StartHere = () => {
                 value={firstTabInput}
                 onChange={(e) => setFirstTabInput(e.target.value)}
                 placeholder="0,00"
+                onClick={handleNextClick}
               />
-              {errors.firstTabInput && <ErrorSpan>{errors.firstTabInput}</ErrorSpan>}
+              <ErrorSpan visible={isVisible}>Por favor, insira um valor válido para a conta.</ErrorSpan>
             </Column>
           </FormWizard.TabContent>
 
           <FormWizard.TabContent
             title="Definir Valor Liberado"
             icon="fa fa-gear"
-            validateTab={validateTab2}
+            isValid={checkValidateTab()}
           >
             <Column>
               <Title>Agora adicione quanto quer gastar por mês</Title>
@@ -224,16 +216,12 @@ const StartHere = () => {
                 onChange={(e) => setReleasedPercentage(e.target.value)}
                 placeholder="Porcentagem liberada"
               />
-              {errors.releasedPercentage && (
-                <ErrorSpan>{errors.releasedPercentage}</ErrorSpan>
-              )}
             </Column>
           </FormWizard.TabContent>
 
           <FormWizard.TabContent
             title="Investimentos"
             icon="fa fa-check"
-            validateTab={validateTab3}
           >
             <Column>
               <Title>Agora, adicione uma porcentagem que planeje investir no mês</Title>
@@ -246,12 +234,10 @@ const StartHere = () => {
                 onChange={(e) => setInvestmentPercentage(e.target.value)}
                 placeholder="Porcentagem de investimento"
               />
-              {errors.investmentPercentage && (
-                <ErrorSpan>{errors.investmentPercentage}</ErrorSpan>
-              )}
             </Column>
           </FormWizard.TabContent>
         </FormWizard>
+
 
         <style>
           {`
@@ -335,4 +321,4 @@ const StartHere = () => {
 };
 
 
-export default StartHere;
+export default StartHereForm;

@@ -20,6 +20,26 @@ router.post("/register", (req, res) => {
   });
 });
 
+router.post("/starthereregistevalue", (req, res) => {
+  const { total_amount, released_amount } = req.body;
+
+  if (!total_amount || !released_amount) {
+    return res.status(400).json({ message: "Os valores 'total_amount' e 'released_amount' são obrigatórios." });
+  }
+
+  const sql = "INSERT INTO users (`total_amount`, `released_amount`) VALUES (?, ?)";
+  const values = [parseFloat(total_amount), parseFloat(released_amount)]; 
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Erro ao inserir valor total do usuário:", err);
+      return res.status(500).json({ message: "Erro ao registrar valor total do usuário", error: err });
+    }
+    res.status(201).json({ message: "Valor total do usuário registrado com sucesso!" });
+  });
+});
+
+
 
 
 
