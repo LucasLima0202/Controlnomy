@@ -21,23 +21,29 @@ router.post("/register", (req, res) => {
 });
 
 router.post("/starthereregistevalue", (req, res) => {
-  const { total_amount, released_amount } = req.body;
+  const { total_amount, released_amount, percent_invest } = req.body;
 
-  if (!total_amount || !released_amount) {
-    return res.status(400).json({ message: "Os valores 'total_amount' e 'released_amount' são obrigatórios." });
+  if (total_amount === undefined || released_amount === undefined || percent_invest === undefined) {
+    return res.status(400).json({ message: "Todos os campos são obrigatórios." });
   }
 
-  const sql = "INSERT INTO users (`total_amount`, `released_amount`) VALUES (?, ?)";
-  const values = [parseFloat(total_amount), parseFloat(released_amount)]; 
+  const sql = `
+    UPDATE users 
+    SET total_amount = ?, released_amount = ?, percent_invest = ? 
+    WHERE id_user = 1`; // Atualiza o registro do usuário com ID 1
+  const values = [parseFloat(total_amount), parseFloat(released_amount), parseFloat(percent_invest)];
 
   db.query(sql, values, (err, result) => {
     if (err) {
-      console.error("Erro ao inserir valor total do usuário:", err);
-      return res.status(500).json({ message: "Erro ao registrar valor total do usuário", error: err });
+      console.error("Erro ao atualizar valores:", err);
+      return res.status(500).json({ message: "Erro ao atualizar valores no banco de dados.", error: err });
     }
-    res.status(201).json({ message: "Valor total do usuário registrado com sucesso!" });
+    res.status(200).json({ message: "Valores atualizados com sucesso!" });
   });
 });
+
+
+
 
 
 

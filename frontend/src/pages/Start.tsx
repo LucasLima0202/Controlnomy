@@ -129,52 +129,75 @@ const Title = styled.h3`
     font-size: 1.2rem;
   }
 `;
+
+
+interface FormValues {
+  total_amount: number;
+  released_amount: number;
+  percent_invest: number;  
+  }
+
 interface Errors {
   firstTabInput?: string;
   releasedPercentage?: string;
   investmentPercentage?: string;
 }
+
+
+
 const StartHereForm = () => {
-  const [firstTabInput, setFirstTabInput] = React.useState<string>("");
-  const [releasedPercentage, setReleasedPercentage] = useState<string>(""); // Valor liberado (%)
-  const [investmentPercentage, setInvestmentPercentage] = useState<string>(""); // Investimento (%)
-  const [errors, setErrors] = useState<Errors>({});
-  const [isVisible, setIsVisible] = useState(false); // Começa invisível
+  const [firstTabInput, setFirstTabInput] = useState<string>("0");
+  const [releasedPercentage, setReleasedPercentage] = useState<string>("0");
+  const [investmentPercentage, setInvestmentPercentage] = useState<string>("0");
+  const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
 
-  const handleComplete = () => {
-    console.log("Form completed!");
-    console.log("Valor da Conta:", firstTabInput);
-    console.log("Valor Liberado (%):", releasedPercentage);
-    console.log("Investimento (%):", investmentPercentage);
-    alert("Formulário concluído com sucesso!");
-    navigate("/Transactions");
-  };
-
-  const checkValidateTab = () => {
-    return firstTabInput.trim() !== ""; // Verifica se o input não está vazio
+  const checkValidateTab = (): boolean => {
+    return firstTabInput.trim() !== "" && parseInt(firstTabInput, 10) > 0;
   };
 
   const handleValidationError = () => {
-    if (!checkValidateTab()) {
-      setIsVisible(true); // Exibe a mensagem de erro
-    } else {
-      setIsVisible(false); // Esconde a mensagem de erro se o input for válido
-    }
+    setIsVisible(!checkValidateTab());
   };
 
+  const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ""); 
+    setter(value.slice(0, 2)); 
+  };
+  const setDefault = (setter: React.Dispatch<React.SetStateAction<string>>) => {
+    return () => {
+      setter("");
+    };
+  };
+  const handleComplete = async () => {
+    const data = {
+      total_amount: parseFloat(firstTabInput) || 0,
+      released_amount: parseInt(releasedPercentage, 10) || 0,
+      percent_invest: parseInt(investmentPercentage, 10) || 0,
+    };
+  
+    console.log("Dados enviados ao servidor:", data);
+  
+    try {
+      const res = await axios.post("http://localhost:8081/api/starthereregistevalue", data);
+      console.log("Resposta do servidor:", res.data);
+      alert("Valores atualizados com sucesso!");
+      navigate("/");
+    } catch (err) {
+      console.error("Erro ao registrar valores:", err);
+      alert("Erro ao registrar os valores. Tente novamente.");
+    }
+  };
+  
+  
   const handleNextClick = () => {
-    if (!checkValidateTab()) {
-      handleValidationError();
-    } else {
-      setIsVisible(false);
-    }
-  };
+    handleValidationError(); 
 
+  };
   return (
     <Body>
       <Section>
-      <FormWizard onComplete={handleComplete} color="#282B2F">
+      <FormWizard onComplete={handleComplete}  color="#282B2F">
           <FormWizard.TabContent
             title="Registrar Conta"
             icon="fa fa-user"
@@ -193,8 +216,12 @@ const StartHereForm = () => {
                 type="number"
                 value={firstTabInput}
                 onChange={(e) => setFirstTabInput(e.target.value)}
-                placeholder="0,00"
-                onClick={handleNextClick}
+                onClick={() => {
+                  setDefault(setFirstTabInput)();  
+                  handleNextClick();
+                }}
+                placeholder="Digite o Valor da Conta"
+
               />
               <ErrorSpan visible={isVisible}>Por favor, insira um valor válido para a conta.</ErrorSpan>
             </Column>
@@ -213,7 +240,8 @@ const StartHereForm = () => {
               <StyledInput
                 type="number"
                 value={releasedPercentage}
-                onChange={(e) => setReleasedPercentage(e.target.value)}
+                onClick={setDefault(setReleasedPercentage)}
+                onChange={handleInputChange(setReleasedPercentage)}
                 placeholder="Porcentagem liberada"
               />
             </Column>
@@ -231,7 +259,9 @@ const StartHereForm = () => {
               <StyledInput
                 type="number"
                 value={investmentPercentage}
-                onChange={(e) => setInvestmentPercentage(e.target.value)}
+                onClick={setDefault(setInvestmentPercentage)}
+
+                onChange={handleInputChange(setInvestmentPercentage)}
                 placeholder="Porcentagem de investimento"
               />
             </Column>
