@@ -125,8 +125,6 @@ const Title = styled.h1`
 const Avatar = styled.div`
   width: 40px;
   height: 40px;
-  background-color: #4d3b3b;
-  border-radius: 50%;
   display: flex;
   line-height:-5px;
   align-items: center;
@@ -211,7 +209,7 @@ const Navbar = () => {
         <Title>
           <Logo src="/svg/LogoBig.svg" alt="Logo" />
         </Title>
-        <Avatar>?</Avatar>
+        <Avatar></Avatar>
       </NavbarContainer>
       <DropdownMenu isOpen={menuOpen}>
         <CloseButton onClick={handleToggleMenu}>×</CloseButton>

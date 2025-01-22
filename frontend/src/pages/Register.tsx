@@ -6,12 +6,12 @@ import axios from "axios";
 
 // Estilização utilizando styled-components
 const Container = styled.div`
-  height: 120vh;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #F5F5F5;
-`;
+  background: #282b2f;
+  `;
 const Form = styled.div`
   font-family: "Poppins", sans-serif;
   position: absolute;
@@ -31,7 +31,7 @@ const Input = styled.input`
   outline: none;
   border: none;
   border:solid 1px #D9D9D9;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgb(249, 249, 249);
   color: #6F6F6F;
   font-size: 18px;
   text-align: left;
@@ -41,9 +41,8 @@ const Input = styled.input`
   transition-property: border-left, border-right, box-shadow;
 
   &:focus {
-    border-left: solid 8px rgba(255, 255, 255, 0.5);
-    border-right: solid 8px rgba(255, 255, 255, 0.5);
-    box-shadow: 0 0 15px rgba(193, 193, 193, 0.8);
+ 
+    box-shadow: 0 0 15px rgba(193, 193, 193, 0.307);
   }
 `;
 const ContainerLabel = styled.div`
@@ -57,9 +56,9 @@ const Button = styled.button`
   outline: none;
   border: none;
   font-weight:600;
-  width: 320px;
+  width: 99%;
   height: 65px;
-  background: #282B2F;
+  background: #DDAB06;
   color: #fff;
   font-size: 17px;
   margin-bottom: 5%;
@@ -72,7 +71,7 @@ const Button = styled.button`
 
   &:hover {
    
-    box-shadow: 0 0 100px rgba(131, 131, 131, 0.767);
+    box-shadow: 0 0 30px rgba(131, 131, 131, 0.278);
   }
 `;
 const ButtonOut = styled.button`
@@ -102,7 +101,7 @@ const CenterContainer = styled.div`
   display: flex;
   justify-content:center;
   align-items:center;
-  margin-bottom:2%;
+  margin-bottom:3%;
 `
 const Options01 = styled.div`
   margin-bottom: 6%;
@@ -119,18 +118,20 @@ const RememberMe = styled.label`
   align-items: center;
   cursor: pointer;
 `;
+const Spancolor = styled.span`
+  color: #FFBB38;
+  text-decoration:underline;
+`
 
 const Label = styled.label`
-color:#7A7A7A;
+color:#a8a8a8;
 font-size: 1.1rem;
 text-align:left;
 justify-content:flex-start;
 `;
-const Logo = styled.div`
- background-color:#282B2F;
- width:150px;
- height:55px;
- margin-bottom:6%;
+const Logo = styled.img`
+  width: 90px;
+  height: 90px;
 `;
 const Options02 = styled.div`
   color: #bbb;
@@ -201,8 +202,8 @@ const handleSubmit = async (event: React.FormEvent) => {
       <Form>
           <form onSubmit={handleSubmit} >
              <CenterContainer>
-                <Logo></Logo>
-            </CenterContainer>
+             <Logo src="/svg/LogoBl.svg" alt="Logo" />          
+             </CenterContainer>
             <Icon className="fas fa-user-plus" />
             <ContainerLabel>
                     <Label htmlFor="user">Nome de Usuario</Label>
@@ -226,7 +227,7 @@ const handleSubmit = async (event: React.FormEvent) => {
               <p>
                Ja tem Cadastro?{" "}
                <Link to="/">
-                  Entrar na sua conta
+                  <Spancolor>Entrar na sua conta</Spancolor>
                </Link>
               </p>
             </Options02>

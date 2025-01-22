@@ -12,7 +12,7 @@ const Body = styled.body`
   margin: 0;
   box-sizing: border-box;
   background-color: #F5F5F5;
-  padding-top: 80px; /* Espaço reservado para a Navbar */
+  padding-top: 12px; /* Espaço reservado para a Navbar */
   min-height: 100vh; /* Garante que o conteúdo ocupe toda a altura da tela */
   display: flex;
   flex-direction: column;
@@ -144,7 +144,10 @@ interface Errors {
 }
 
 
-
+const Logo = styled.img`
+  width: 90px;
+  height: 90px;
+`;
 const StartHereForm = () => {
   const [firstTabInput, setFirstTabInput] = useState<string>("0");
   const [releasedPercentage, setReleasedPercentage] = useState<string>("0");
@@ -197,6 +200,8 @@ const StartHereForm = () => {
   return (
     <Body>
       <Section>
+      <Logo src="/svg/Blackv.svg" alt="Logo" />          
+
       <FormWizard onComplete={handleComplete}  color="#282B2F">
           <FormWizard.TabContent
             title="Registrar Conta"

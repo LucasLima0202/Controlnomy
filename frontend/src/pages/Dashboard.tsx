@@ -3,8 +3,7 @@ import Navbarui from "../components/Navbar";
 import { getCurrentDate } from "../utils/data"; // Ajuste o caminho conforme necessário
 import Lottie from "react-lottie";
 import animationData from "../assets/lotties/welcome.json"
-import Button from "../components/Button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import BoxInsight from "../components/BoxHotkey";
 import BoxAtalhos from "../components/BoxHotkey";
 import BoxGlobal from "../components/BoxGlobal";
@@ -18,6 +17,37 @@ const defaultOptions = {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
+  const Button = styled.button`
+  outline: none;
+  border: none;
+  height: 55px;
+  background: #282B2F;
+  color: #fff;
+  font-size: 15px;
+  margin-top:4%;
+  letter-spacing: 0.5px;
+  border-radius: 5px;
+  font-weight:600;
+  padding-left:5%;
+  padding-right:5%;
+  cursor: pointer;
+  transition: 0.5s;
+  transition-property: border-left, border-right, box-shadow;
+
+  &:hover {
+    box-shadow: 0 0 100px rgba(131, 131, 131, 0.767);
+  }
+  @media (max-width: 568px) {
+  font-size:0.8rem;
+  width:100%;
+  }
+`;
+
+const Row = styled.div`
+display:flex;
+align-items:stretch;
+align-self:stretch;
+flex-flow:column nowrap;`
 
 const BodyGroup = styled.div`
   width: 100%;
@@ -122,7 +152,11 @@ const Elipse = styled.div`
   height: 100px; /* Deve ser igual à largura para manter o formato */
 `;
 
-
+const Strecht = styled.div`
+display:flex;
+width:100%;
+align-items: stretch;
+`
 
 
 const Dashboard = () => {
@@ -148,7 +182,13 @@ const Dashboard = () => {
               <SmallContent>
                 Para começarmos a monitorar insira os dados da sua renda
               </SmallContent>
-              <Button title="Clique aqui"   bgcolor="#343A40" fontsize="0.9rem"/>
+              <Row>
+                <Link to={'/Starthere'}>
+                            <Button >
+                                ㅤAdicionar Transação
+                            </Button>
+                </Link>
+              </Row>
             </GroupLine>
           </GroupWelcome>
 

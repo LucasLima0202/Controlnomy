@@ -11,7 +11,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #F5F5F5;
+  background: #282b2f;
 `;
 const Form = styled.div`
   font-family: "Poppins", sans-serif;
@@ -32,7 +32,7 @@ const Input = styled.input`
   outline: none;
   border: none;
   border:solid 1px #D9D9D9;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgb(249, 249, 249);
   color: #6F6F6F;
   font-size: 18px;
   text-align: left;
@@ -42,7 +42,7 @@ const Input = styled.input`
   transition-property: border-left, border-right, box-shadow;
 
   &:focus {
-    box-shadow: 0 0 15px rgba(193, 193, 193, 0.8);
+    box-shadow: 0 0 15px rgba(193, 193, 193, 0.307);
   }
 `;
 const ContainerLabel = styled.div`
@@ -56,9 +56,9 @@ const Button = styled.button`
   outline: none;
   border: none;
   font-weight:600;
-  width: 320px;
+  width: 99%;
   height: 65px;
-  background: #282B2F;
+  background: #DDAB06;
   color: #fff;
   font-size: 17px;
   margin-bottom: 5%;
@@ -71,20 +71,20 @@ const Button = styled.button`
 
   &:hover {
    
-    box-shadow: 0 0 100px rgba(131, 131, 131, 0.767);
+    box-shadow: 0 0 30px rgba(131, 131, 131, 0.278);
   }
 `;
 const ButtonOut = styled.button`
   outline: none;
   border: none;
-  width: 320px;
+  width: 99%;
   height: 65px;
-  background: transparent;
+  background: #202020;
   margin-top:2%;
   font-weight:600;
   margin-bottom:2%;
-  color: #2f2f2f;
-  border: solid 1.6px #484848;
+  color: #ffffff;
+  border: solid 1.6px #d2d2d233;
   font-size: 17px;
   letter-spacing: 0.2px;
   border-radius: 5px;
@@ -94,7 +94,7 @@ const ButtonOut = styled.button`
    
   &:hover {
    
-    box-shadow: 0 0 100px rgba(131, 131, 131, 0.767);
+    box-shadow: 0 0 30px rgba(131, 131, 131, 0.278);
   }
 `;
 const CenterContainer = styled.div`
@@ -119,7 +119,7 @@ const RememberMe = styled.label`
   cursor: pointer;
 `;
 const Links = styled.a`
-  color: #888;
+  color: #FFBB38;
   font-size: 14px;
   font-style: italic;
 
@@ -134,16 +134,14 @@ const ErrorSpans = styled.span`
   margin-bottom:20px;
 `;
 const Label = styled.label`
-color:#7A7A7A;
+color:#a8a8a8;
 font-size: 1.1rem;
 text-align:left;
 justify-content:flex-start;
 `;
-const Logo = styled.div`
- background-color:#282B2F;
- width:150px;
- height:55px;
- margin-bottom:6%;
+const Logo = styled.img`
+  width: 90px;
+  height: 90px;
 `;
 const Options02 = styled.div`
   color: #bbb;
@@ -232,7 +230,7 @@ const Login = () => {
       <Form>
         <form id="form" onSubmit={handleSubmit}>
           <CenterContainer>
-            <Logo></Logo>
+            <Logo src="/svg/LogoBl.svg" alt="Logo" />          
           </CenterContainer>
           <ContainerLabel>
             <Label id="email">Email</Label>
