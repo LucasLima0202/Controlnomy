@@ -7,6 +7,7 @@ import { useAuth } from "./context/AuthContext";
 import Transactions from "./pages/Transactions";
 import EditTransactions from "./pages/EditTransactions";
 import StartHereForm from "./pages/Start";
+import RedirectPage from "./pages/Redirect";
 
 const App: React.FC = () => {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
@@ -25,7 +26,8 @@ const App: React.FC = () => {
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/Transactions" element={<Transactions />}/>
-        <Route path="/EditTransactions" element={<EditTransactions/>}/>
+        <Route path="/RedirectPage" element={<RedirectPage />} />
+        <Route path="/EditTransactions" element={<EditTransactions/>} />
         <Route path="/StartHere" element={<StartHereForm></StartHereForm>}/>
         <Route path="/Dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/Login" />} />
       </Routes>
