@@ -7,7 +7,7 @@ const StyledButton = styled.button<{ bgcolor?: string; color?: string; fontsize?
   border: none;
   font-weight: 600;
   width: 100%;
-  height: 65px;
+  height: 55px;
   background: ${({ bgcolor }) => bgcolor || '#282B2F'};  // Usar a cor de fundo fornecida ou o valor padrão
   color: ${({ color }) => color || '#fff'};  // Usar a cor fornecida ou o valor padrão
   font-size: ${({ fontsize }) => fontsize || '16px'};  // Usar o fontsize fornecido ou o valor padrão
@@ -16,8 +16,10 @@ const StyledButton = styled.button<{ bgcolor?: string; color?: string; fontsize?
   letter-spacing: 0.5px;
   border-radius: 5px;
   cursor: pointer;
-  transition: all ease-in-out 0.2s;
-  transition-property: border-left, border-right, box-shadow;
+  transition: all ease-in-out 0.5s;
+  padding-left:5%;
+  padding-right:5%;
+
 
   &:hover {
     transform: scale(1.03);

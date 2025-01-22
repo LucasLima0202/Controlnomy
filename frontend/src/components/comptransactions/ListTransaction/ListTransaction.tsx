@@ -74,7 +74,7 @@ const TransactionList = () => {
   return (
     <GroupWelcome>
       <GroupLine>
-        <Container>
+        <Container id="list">
           <Title>Últimas Transações</Title>
           {transactions.map((transaction) => {
             const formattedAmount = formatNumber(transaction.amount);

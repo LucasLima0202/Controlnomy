@@ -50,7 +50,7 @@ const Transactions = () => {
         <AddingTransaction/>
         <AddingOldTransaction/>
         <AddingCategory/>
-        <TransactionList/>
+        <TransactionList id="list"/>
       </Section>
     </Body>
   );

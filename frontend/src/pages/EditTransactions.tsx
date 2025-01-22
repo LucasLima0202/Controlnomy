@@ -82,7 +82,7 @@ const EditTransactions = () => {
                 <Content>Após inserir os dados da transação confira seu Dashboard</Content>
                 <Lottie options={defaultOptions} height={180} width={180} />
                 <Link to={'/Dashboard'}>
-                  <Button fontsize="0.9rem">
+                  <Button fontsize="0.8rem">
                   IR PARA O DASHBOARD <FontAwesomeIcon icon={faArrowRight} />
                   </Button>
                 </Link>

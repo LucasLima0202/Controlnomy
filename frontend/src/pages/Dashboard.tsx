@@ -91,7 +91,7 @@ const Content = styled.h1`
   color: #343A40;
   font-weight: 600;
   margin-bottom: 1%;
-  margin-top:1%;
+  margin-top:4%;
   @media (max-width: 768px) {
     font-size: 1.2rem;
   }

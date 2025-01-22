@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import FormWizard from "react-form-wizard-component";
 import "react-form-wizard-component/dist/style.css";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import GetStartHereValidation from "../hooks/StartHereValidation";
 
@@ -145,8 +145,9 @@ interface Errors {
 
 
 const Logo = styled.img`
-  width: 90px;
-  height: 90px;
+margin-top:2%;
+  width: 85px;
+  height: 85px;
 `;
 const StartHereForm = () => {
   const [firstTabInput, setFirstTabInput] = useState<string>("0");
@@ -200,7 +201,9 @@ const StartHereForm = () => {
   return (
     <Body>
       <Section>
+      <Link to={'/Dashboard'}>
       <Logo src="/svg/Blackv.svg" alt="Logo" />          
+      </Link>
 
       <FormWizard onComplete={handleComplete}  color="#282B2F">
           <FormWizard.TabContent

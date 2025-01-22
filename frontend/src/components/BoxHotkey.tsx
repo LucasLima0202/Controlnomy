@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import CenterIcon from "./CenterIcon";
-import { faGear, faHouse, faList, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faHouse, faList, faPlus, faScaleBalanced } from "@fortawesome/free-solid-svg-icons";
 import { faCreditCardAlt } from "@fortawesome/free-regular-svg-icons";
 import { Link } from "react-router-dom";
 
@@ -74,12 +74,17 @@ const BoxAtalhos = () => {
             <Span>Adicionar Transação</Span>
           </InfoIcon>
           <InfoIcon>
+          <Link to="/EditTransactions">
             <CenterIcon icon={faList} />
+          </Link>
             <Span>Lista Transação</Span>
           </InfoIcon>
           <InfoIcon>
-            <CenterIcon icon={faCreditCardAlt} />
-            <Span>Fatura Cartão</Span>
+          <Link to="/StartHere">
+            <CenterIcon icon={faScaleBalanced} />
+            </Link>
+            <Span>Personalizar Saldo</Span>
+           
           </InfoIcon>
           <InfoIcon>
             <CenterIcon icon={faGear} />
