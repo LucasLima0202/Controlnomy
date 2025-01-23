@@ -163,6 +163,10 @@ align-items: stretch;
 
 const Dashboard = () => {
   const [userId] = useState(1); 
+  const [releasedamnt, setReleasedamnt] = useState(null);
+  const [currentamnt, setCurrentamnt] = useState(null);
+  const [spenttotal, setSpendtotal] = useState(null);
+  const [earntotal, setEarntotal] = useState(null);
   const [userInfo, setUserInfo] = useState({
     saldoLiberado: 0,
     saldoAtual: 0,
@@ -171,19 +175,27 @@ const Dashboard = () => {
   });
   const [hasTransactions, setHasTransactions] = useState(false);
 
-  useEffect(() => {
-    if (userId) {
-      axios
-        .get(`http://localhost:8081/dashdados/${userId}`)  // Agora a URL está correta
-        .then((response) => {
-          setUserInfo(response.data);
-          setHasTransactions(response.data.totalGanhos > 0 || response.data.totalGastos > 0);
-        })
-        .catch((error) => {
-          console.error("Erro ao buscar dados do dashboard:", error);
-        });
-    }
-  }, [userId]);
+
+
+useEffect(() => {
+  Promise.all([
+    axios.get("http://localhost:8081/api/currentamount"), 
+    axios.get("http://localhost:8081/api/spenttotal"),  
+    axios.get("http://localhost:8081/api/earntotal") ,
+    axios.get("http://localhost:8081/api/releasedamount")
+  ])
+    .then(([response1, response2, response3, response4]) => {
+      setCurrentamnt(response1.data.saldo_atual);
+      setSpendtotal(response2.data.total_gastos); 
+      setEarntotal(response3.data.total_ganho);
+      setReleasedamnt(response4.data.saldo_liberado);
+
+    })
+    .catch((error) => {
+      console.error("Erro ao buscar saldo atual, saldo liberado, gastos e ganhos totais:", error);
+    });
+}, []);
+
   
   return (
     <WholeSite>
@@ -194,7 +206,7 @@ const Dashboard = () => {
           <GroupWelcome>
             <GroupLine>
               <h3>Informações financeiras do usuário</h3>
-              <p>Saldo Liberado: R${userInfo.saldoLiberado}</p>
+              <p>Saldo Liberado: R${releasedamnt}</p>
               <p>Saldo Atual: R${userInfo.saldoAtual}</p>
               <p>Total de Ganhos: R${userInfo.totalGanhos}</p>
               <p>Total de Despesas: R${userInfo.totalGastos}</p>
@@ -229,10 +241,10 @@ const Dashboard = () => {
        <GroupWelcome>
             <GroupLine>
               <h3>Informações financeiras do usuário</h3>
-              <p>Saldo Liberado: R${userInfo.saldoLiberado}</p>
-              <p>Saldo Atual: R${userInfo.saldoAtual}</p>
-              <p>Total de Ganhos: R${userInfo.totalGanhos}</p>
-              <p>Total de Despesas: R${userInfo.totalGastos}</p>
+              <p>Saldo Liberado: R$ {releasedamnt}</p>
+              <p>Saldo Atual: R$ {currentamnt}</p>
+              <p>Total de Despesas: R$ {spenttotal}</p>
+              <p>Total de Ganhos: R$ {earntotal}</p>
             </GroupLine>
           </GroupWelcome>
         <BoxAtalhos />
