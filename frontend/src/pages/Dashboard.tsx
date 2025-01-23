@@ -7,17 +7,19 @@ import { Link, useNavigate } from "react-router-dom";
 import BoxInsight from "../components/BoxHotkey";
 import BoxAtalhos from "../components/BoxHotkey";
 import BoxGlobal from "../components/BoxGlobal";
+import { useContext, useEffect, useState } from "react";
+import axios from "axios";
 // import { Link } from 'react-scroll';
 
 const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: animationData,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
-  const Button = styled.button`
+  loop: true,
+  autoplay: true,
+  animationData: animationData,
+  rendererSettings: {
+    preserveAspectRatio: "xMidYMid slice",
+  },
+};
+const Button = styled.button`
   outline: none;
   border: none;
   height: 55px;
@@ -119,6 +121,7 @@ color:#777777;
 const GroupWelcome = styled.div`
 width:80%;
 display:flex;
+margin:4%;
 justify-content:center;
 gap:7px;
 align-items:center;
@@ -158,17 +161,48 @@ width:100%;
 align-items: stretch;
 `
 
-
 const Dashboard = () => {
-  const navigate = useNavigate();
+  const [userId] = useState(1); 
+  const [userInfo, setUserInfo] = useState({
+    saldoLiberado: 0,
+    saldoAtual: 0,
+    totalGanhos: 0,
+    totalGastos: 0,
+  });
+  const [hasTransactions, setHasTransactions] = useState(false);
 
-
-    return (
-      <WholeSite>
-        <Navbarui />
-        <BodyGroup>
-          <Title>Bem-vindo ao Dashboard</Title>
+  useEffect(() => {
+    if (userId) {
+      axios
+        .get(`http://localhost:8081/dashdados/${userId}`)  // Agora a URL está correta
+        .then((response) => {
+          setUserInfo(response.data);
+          setHasTransactions(response.data.totalGanhos > 0 || response.data.totalGastos > 0);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar dados do dashboard:", error);
+        });
+    }
+  }, [userId]);
   
+  return (
+    <WholeSite>
+      <Navbarui />
+      <BodyGroup>
+        <Title>Bem-vindo ao Dashboard</Title>
+        {hasTransactions ? (
+          <GroupWelcome>
+            <GroupLine>
+              <h3>Informações financeiras do usuário</h3>
+              <p>Saldo Liberado: R${userInfo.saldoLiberado}</p>
+              <p>Saldo Atual: R${userInfo.saldoAtual}</p>
+              <p>Total de Ganhos: R${userInfo.totalGanhos}</p>
+              <p>Total de Despesas: R${userInfo.totalGastos}</p>
+            </GroupLine>
+          </GroupWelcome>
+
+        ) : (
+
           <GroupWelcome>
             <GroupLine>
               <DateContent>
@@ -184,22 +218,30 @@ const Dashboard = () => {
               </SmallContent>
               <Row>
                 <Link to={'/Starthere'}>
-                            <Button >
-                                ㅤAdicionar Transação
-                            </Button>
+                  <Button >
+                    ㅤAdicionar Transação
+                  </Button>
                 </Link>
               </Row>
             </GroupLine>
           </GroupWelcome>
+        )}
+       <GroupWelcome>
+            <GroupLine>
+              <h3>Informações financeiras do usuário</h3>
+              <p>Saldo Liberado: R${userInfo.saldoLiberado}</p>
+              <p>Saldo Atual: R${userInfo.saldoAtual}</p>
+              <p>Total de Ganhos: R${userInfo.totalGanhos}</p>
+              <p>Total de Despesas: R${userInfo.totalGastos}</p>
+            </GroupLine>
+          </GroupWelcome>
+        <BoxAtalhos />
+        <BoxGlobal />
 
 
-          <BoxAtalhos/>
-          <BoxGlobal/>
+      </BodyGroup>
+    </WholeSite>
+  );
+};
 
-
-        </BodyGroup>
-      </WholeSite>
-    );
-  };
-  
-  export default Dashboard;
+export default Dashboard;

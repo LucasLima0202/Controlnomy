@@ -67,4 +67,49 @@ router.post("/login", (req, res) => {
   });
 });
 
+
+
+app.get('/dashdados/:userId', (req, res) => {
+  const userId = req.params.userId;  // Agora pega o parâmetro userId da URL
+  console.log(`Recebendo dados para o userId: ${userId}`); // Verificação para ver se o userId está sendo recebido corretamente
+
+  const query = `
+    SELECT 
+      FORMAT(total_amount * released_amount / 100, 2) AS saldo_liberado, 
+      FORMAT(
+        (total_amount * released_amount / 100) + 
+        (SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE type = 1 AND user_id = ?) - 
+        (SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE type = 0 AND user_id = ?), 
+        2
+      ) AS saldo_atual,
+      FORMAT(
+        (SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE user_id = ? AND type = 0), 
+        2
+      ) AS total_gastos,
+      FORMAT(
+        (SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE user_id = ? AND type = 1), 
+        2
+      ) AS total_ganhos,
+      FORMAT(total_amount, 2) AS valor_conta,
+      FORMAT(
+        total_amount - (total_amount * released_amount / 100) + 
+        (SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE type = 1 AND user_id = ?) - 
+        (SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE type = 0 AND user_id = ?), 
+        2
+      ) AS valor_conta_menos
+    FROM users
+    WHERE id_user = ?;
+  `;
+
+  db.query(query, [userId, userId, userId, userId, userId, userId], (err, result) => {
+    if (err) {
+      console.error("Erro ao buscar dados do dashboard:", err);
+      return res.status(500).json({ message: 'Erro ao buscar dados do dashboard' });
+    }
+    res.json(result[0]);  // Envia os dados para o frontend
+  });
+});
+
+
 module.exports = router;
+

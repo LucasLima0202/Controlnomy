@@ -10,26 +10,30 @@ import StartHereForm from "./pages/Start";
 import RedirectPage from "./pages/Redirect";
 
 const App: React.FC = () => {
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  // const { isAuthenticated, setIsAuthenticated } = useAuth();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-    if (token) {
-      setIsAuthenticated(true);
-    }
-  }, [setIsAuthenticated]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  //   if (token) {
+  //     setIsAuthenticated(true);
+  //   }
+  // }, [setIsAuthenticated]);
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={isAuthenticated ? <Navigate to="/Dashboard" /> : <Navigate to="/Login" />} />
+        {/* <Route path="/" element={isAuthenticated ? <Navigate to="/Dashboard" /> : <Navigate to="/Login" />} /> */}
+        <Route path="/" element={<Navigate to="/Login" />} />
+
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/Transactions" element={<Transactions />}/>
         <Route path="/RedirectPage" element={<RedirectPage />} />
         <Route path="/EditTransactions" element={<EditTransactions/>} />
         <Route path="/StartHere" element={<StartHereForm></StartHereForm>}/>
-        <Route path="/Dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/Login" />} />
+        {/* <Route path="/Dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/Login" />} /> */}
+        <Route path="/Dashboard" element={<Dashboard />} />
+
       </Routes>
     </BrowserRouter>
   );
