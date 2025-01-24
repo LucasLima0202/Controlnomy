@@ -103,18 +103,18 @@ const SearchListTransaction = () => {
   // Função para editar a transação
   const handleEdit = (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     const updatedTransaction = {
       value: newValue,
       description: newDescription,
       type: newType,  // 'Despesa' ou 'Ganho'
       category: newCategoryId,  // ID da categoria
     };
-  
+
     axios.put(`http://localhost:8081/api/transaction/${editedTransaction.id}`, updatedTransaction)
       .then(response => {
         console.log("Transação atualizada com sucesso");
-  
+
         // Recarregar a lista de transações após a atualização
         axios.get("http://localhost:8081/api/transactionslist")
           .then(response => {
@@ -129,7 +129,7 @@ const SearchListTransaction = () => {
         console.error("Erro ao atualizar transação:", error);
       });
   };
-  
+
   // Função para excluir a transação
   const handleDelete = () => {
     axios.delete(`http://localhost:8081/api/transaction/${editedTransaction.id}`)
@@ -152,9 +152,9 @@ const SearchListTransaction = () => {
           <Container>
             <Title>Pesquise por Transações</Title>
             <Column>
-            <Searchbar>
-                <FontAwesomeIcon icon={faSearch} fontSize={18}/>
-            </Searchbar>
+              <Searchbar>
+                <FontAwesomeIcon icon={faSearch} fontSize={18} />
+              </Searchbar>
             </Column>
             {transactions.map((transaction) => {
               const formattedAmount = formatNumber(transaction.amount);
@@ -184,7 +184,7 @@ const SearchListTransaction = () => {
                     </Column>
                   </Septext>
                   <SepPrice>
-                    <Price type={transaction.type === 1 ? "Despesa" : "Ganho"}>
+                    <Price type={transaction.type === 0 ? "Ganho" : "Despesa"}>
                       R${formattedAmount}
                     </Price>
                   </SepPrice>
@@ -234,12 +234,10 @@ const SearchListTransaction = () => {
                   <Dropdown
                     id="type"
                     value={newType}
-                    onChange={(e) =>
-                      setNewType(Number(e.target.value))
-                    }
+                    onChange={(e) => setNewType(Number(e.target.value))} // Confirma se o valor é numérico
                   >
                     <option value={1}>Despesa</option>
-                    <option value={2}>Ganho</option>
+                    <option value={0}>Ganho</option>
                   </Dropdown>
                 </Column>
 

@@ -98,7 +98,7 @@ router.put("/transaction/:id", (req, res) => {
   }
 
   // Verificar tipo de transação (1 = Despesa, 0 = Ganho)
-  const transactionType = type === 'Despesa' ? 1 : 0;
+  const transactionType = type === 1 ? 1 : 0;
 
   const sql = `
     UPDATE transactions
