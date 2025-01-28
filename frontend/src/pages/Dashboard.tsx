@@ -9,6 +9,8 @@ import BoxAtalhos from "../components/BoxHotkey";
 import BoxGlobal from "../components/BoxGlobal";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCreditCard, faIceCream, faMoneyBill, faMoneyBill1Wave, faMoneyBills, faMoneyBillWave, faReceipt } from "@fortawesome/free-solid-svg-icons";
 // import { Link } from 'react-scroll';
 
 const defaultOptions = {
@@ -69,7 +71,7 @@ const WholeSite = styled.div`
   width: 100%;
   margin:0;
   box-sizing: border-box;
-  background-color: #F5F5F5;
+  background-color: #ECF0F2;
   padding-top: 80px; /* Espaço reservado para a Navbar */
   min-height: 100vh; /* Garante que o conteúdo ocupe toda a altura da tela */
   display: flex;
@@ -80,7 +82,7 @@ const WholeSite = styled.div`
 `;
 
 const Title = styled.h1`
-  margin-top:6%;
+  margin-top:4%;
   font-size: 1.5rem;
   color:#343A40;
   font-weight:600;
@@ -122,6 +124,7 @@ const GroupWelcome = styled.div`
 width:80%;
 display:flex;
 margin:4%;
+margin-top: 2%;
 justify-content:center;
 gap:7px;
 align-items:center;
@@ -161,8 +164,159 @@ width:100%;
 align-items: stretch;
 `
 
+
+const RowCustom = styled.div`
+display:flex;
+width:100%;
+justify-content:space-evenly;
+align-items:stretch;
+flex-flow: row nowrap;
+`
+
+const RowLeft = styled.div`
+display:flex;
+width:100%;
+margin-top:3%;
+margin-bottom:3%;
+justify-content:flex-start;
+align-items:stretch;
+flex-flow: row nowrap;
+`
+
+const RowGroup = styled.div`
+display:flex;
+width:100%;
+margin-top:5%;
+margin-bottom:5%;
+justify-content:space-between;
+align-items:stretch;
+flex-flow: row nowrap;
+`
+
+const Diviser = styled.div`
+display: flex;
+align-items:flex-start;
+width:100%;
+`
+const DateMin = styled.span`
+font-size: 0.89rem;
+padding-top:1%;
+width: 70%;
+text-transform:capitalize;
+margin-bottom:2%;
+text-align: center;
+margin-bottom: 5px;
+color:#718EBF;
+`
+
+const Diveser = styled.div`
+display: flex;
+align-items:center;
+width:100%;
+`
+
+const ColumnCustom = styled.div`
+display:flex;
+flex-flow: column nowrap;
+
+span{
+padding-left:10px;
+}
+`
+const Mp = styled.span`
+color:#718EBF;
+font-family: "Inter", serif;
+`
+
+const MpMinus = styled.span`
+color:#b53636;
+font-size: 14px;
+padding:0 !important;
+margin-top:6%;  
+font-family: "Inter", serif;
+text-align:center;
+
+`
+
+const MpGain = styled.span`
+color:#236a18;
+padding:0 !important;
+margin-top:6%;  
+font-size: 14px;
+font-family: "Inter", serif;
+text-align:center;
+`
+
+const Sp = styled.span`
+color:#718EBF;
+margin-left:20px;
+margin-top:6%;
+margin-bottom:6%;
+font-family: "Inter", serif;
+
+`
+
+const SpanColor = styled.span`
+color:#333B69;
+font-weight:500;
+font-family: "Inter", serif;
+
+`
+const SpanColorMinus = styled.span`
+color:#333B69;
+font-weight:500;
+font-size: 13px;
+width:100%;
+margin-top:8%;
+word-wrap:normal;
+text-align:center;
+padding:0 !important;
+font-family: "Inter", serif;
+
+`
+
+const SquareRet = styled.div`
+background: #282B2F;
+padding:5% 12%;
+border-radius:4px;
+width:100%;
+`
+const Squaretxt = styled.div`
+color: #ffffff;
+`
+
+const Cardarticle = styled.div`
+display:flex;
+align-items:center;
+`
+const Articlecol = styled.div`
+display:flex;
+flex-flow: column;
+justify-content:center;
+align-items:center;
+`
+
+const IconGroup = styled.div`
+height:60px;
+width:60px;
+background-color: #282B2F;
+display:flex;
+align-items:center;
+justify-content: center;
+border-radius: 4px;
+transition: ease-in-out all 0.2s;
+color:#FFFFFF;
+`
+const Separator = styled.div`
+background-color: #F1F1F1;
+width:100%;
+height:1.5px;
+margin-top:4%;
+margin-bottom:4%;
+`
+
 const Dashboard = () => {
-  const [userId] = useState(1); 
+  const [userId] = useState(1);
   const [releasedamnt, setReleasedamnt] = useState(null);
   const [currentamnt, setCurrentamnt] = useState(null);
   const [spenttotal, setSpendtotal] = useState(null);
@@ -177,26 +331,26 @@ const Dashboard = () => {
 
 
 
-useEffect(() => {
-  Promise.all([
-    axios.get("http://localhost:8081/api/currentamount"), 
-    axios.get("http://localhost:8081/api/spenttotal"),  
-    axios.get("http://localhost:8081/api/earntotal") ,
-    axios.get("http://localhost:8081/api/releasedamount")
-  ])
-    .then(([response1, response2, response3, response4]) => {
-      setCurrentamnt(response1.data.saldo_atual);
-      setSpendtotal(response2.data.total_gastos); 
-      setEarntotal(response3.data.total_ganho);
-      setReleasedamnt(response4.data.saldo_liberado);
+  useEffect(() => {
+    Promise.all([
+      axios.get("http://localhost:8081/api/currentamount"),
+      axios.get("http://localhost:8081/api/spenttotal"),
+      axios.get("http://localhost:8081/api/earntotal"),
+      axios.get("http://localhost:8081/api/releasedamount")
+    ])
+      .then(([response1, response2, response3, response4]) => {
+        setCurrentamnt(response1.data.saldo_atual);
+        setSpendtotal(response2.data.total_gastos);
+        setEarntotal(response3.data.total_ganho);
+        setReleasedamnt(response4.data.saldo_liberado);
 
-    })
-    .catch((error) => {
-      console.error("Erro ao buscar saldo atual, saldo liberado, gastos e ganhos totais:", error);
-    });
-}, []);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar saldo atual, saldo liberado, gastos e ganhos totais:", error);
+      });
+  }, []);
 
-  
+
   return (
     <WholeSite>
       <Navbarui />
@@ -238,16 +392,79 @@ useEffect(() => {
             </GroupLine>
           </GroupWelcome>
         )}
-       <GroupWelcome>
-            <GroupLine>
-              <h3>Informações financeiras do usuário</h3>
-              <p>Saldo Liberado: R$ {releasedamnt}</p>
-              <p>Saldo Atual: R$ {currentamnt}</p>
-              <p>Total de Despesas: R$ {spenttotal}</p>
-              <p>Total de Ganhos: R$ {earntotal}</p>
-            </GroupLine>
-          </GroupWelcome>
+        <Title>Destaques</Title>
+        <GroupWelcome>
+          <GroupLine>
+
+
+            <RowCustom>
+              <Diviser>
+                <DateMin>{new Date().toLocaleString("pt-BR", { month: "long" })}{"ㅤ"}{getCurrentDate()}</DateMin>
+              </Diviser>
+              <Diveser>
+                <ColumnCustom>
+                  <SquareRet>
+                   <Squaretxt>Saldo Liberado</Squaretxt>
+                  </SquareRet>
+                  <Sp>R$ {releasedamnt}</Sp>
+                </ColumnCustom>
+              </Diveser>
+            </RowCustom>
+
+
+
+            <RowLeft>
+              <Cardarticle>
+                <IconGroup>
+                  <FontAwesomeIcon icon={faMoneyBill} fontSize={21}/>
+                </IconGroup>
+                <ColumnCustom>
+                <SpanColor>Saldo Atual</SpanColor>
+                <Mp>R$ {currentamnt}</Mp>
+                </ColumnCustom>
+              </Cardarticle>
+            </RowLeft>
+
+            <Separator></Separator>
+
+
+            <RowGroup>
+              <Articlecol>
+                <IconGroup>
+                  <FontAwesomeIcon icon={faReceipt} fontSize={21}/>
+                </IconGroup>
+                <ColumnCustom>
+                <SpanColorMinus>Total <br/>Despesas</SpanColorMinus>
+                <MpMinus>R$ {currentamnt}</MpMinus>
+                </ColumnCustom>
+              </Articlecol>
+
+              <Articlecol>
+                <IconGroup>
+                  <FontAwesomeIcon icon={faMoneyBillWave} fontSize={21}/>
+                </IconGroup>
+                <ColumnCustom>
+                <SpanColorMinus>Total <br/>Ganhos</SpanColorMinus>
+                <MpGain>R$ {currentamnt}</MpGain>
+                </ColumnCustom>
+              </Articlecol>
+
+              <Articlecol>
+                <IconGroup>
+                  <FontAwesomeIcon icon={faCreditCard} fontSize={21}/>
+                </IconGroup>
+                <ColumnCustom>
+                <SpanColorMinus>Total <br/>Fatura</SpanColorMinus>
+                <MpGain>R$ {earntotal}</MpGain>
+                </ColumnCustom>
+              </Articlecol>
+
+            </RowGroup>
+          </GroupLine>
+        </GroupWelcome>
+        <Title>Atalhos</Title>
         <BoxAtalhos />
+        <Title>Destaques</Title>
         <BoxGlobal />
 
 

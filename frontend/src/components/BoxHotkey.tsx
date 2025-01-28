@@ -11,7 +11,7 @@ const GroupWelcome = styled.div`
   align-items: center;
   flex-direction: row;
   background-color: #ffffff;
-  margin-top: 7%;
+  margin-top: 4%;
   margin-bottom: 7%;
   padding: 4%;
   border-radius: 8px;
