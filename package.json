@@ -6,6 +6,7 @@
     "vite-plugin-svgr": "^4.3.0"
   },
   "devDependencies": {
-    "@types/node": "^22.10.6"
+    "@types/node": "^22.10.6",
+    "@types/react-datepicker": "^6.2.0"
   }
 }

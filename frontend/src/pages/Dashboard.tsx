@@ -5,12 +5,14 @@ import Lottie from "react-lottie";
 import animationData from "../assets/lotties/welcome.json"
 import { Link, useNavigate } from "react-router-dom";
 import BoxInsight from "../components/BoxHotkey";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css"; // Importando o estilo para o DatePicker
 import BoxAtalhos from "../components/BoxHotkey";
 import BoxGlobal from "../components/BoxGlobal";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCreditCard, faIceCream, faMoneyBill, faMoneyBill1Wave, faMoneyBills, faMoneyBillWave, faReceipt } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faArrowRight, faChevronLeft, faChevronRight, faCreditCard, faIceCream, faMoneyBill, faMoneyBill1Wave, faMoneyBills, faMoneyBillWave, faReceipt } from "@fortawesome/free-solid-svg-icons";
 // import { Link } from 'react-scroll';
 
 const defaultOptions = {
@@ -53,6 +55,14 @@ align-items:stretch;
 align-self:stretch;
 flex-flow:column nowrap;`
 
+const ArrowButton = styled.button`
+background: none;
+border: none;
+cursor: pointer;
+font-size: 1.5rem;
+color: #768598;
+`;
+
 const BodyGroup = styled.div`
   width: 100%;
   margin:0;
@@ -64,7 +74,7 @@ const BodyGroup = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  color: #343A40;
+  color: #6b8095;
 `;
 
 const WholeSite = styled.div`
@@ -168,6 +178,7 @@ align-items: stretch;
 const RowCustom = styled.div`
 display:flex;
 width:100%;
+gap:20px;
 justify-content:space-evenly;
 align-items:stretch;
 flex-flow: row nowrap;
@@ -196,14 +207,14 @@ flex-flow: row nowrap;
 const Diviser = styled.div`
 display: flex;
 align-items:flex-start;
+justify-content:center;
 width:100%;
 `
 const DateMin = styled.span`
 font-size: 0.89rem;
 padding-top:1%;
-width: 70%;
+width: 100%;
 text-transform:capitalize;
-margin-bottom:2%;
 text-align: center;
 margin-bottom: 5px;
 color:#718EBF;
@@ -211,18 +222,30 @@ color:#718EBF;
 
 const Diveser = styled.div`
 display: flex;
-align-items:center;
-width:100%;
+align-items:stretch;
+justify-content:space-between;
+font-weight:800;
+margin-top:-39px;
 `
 
 const ColumnCustom = styled.div`
 display:flex;
 flex-flow: column nowrap;
-
+width:100%;
 span{
 padding-left:10px;
 }
 `
+
+
+const CollumTypeIcon = styled.div`
+display:flex;
+flex-flow: column nowrap;
+
+;`
+
+
+
 const Mp = styled.span`
 color:#718EBF;
 font-family: "Inter", serif;
@@ -277,7 +300,8 @@ font-family: "Inter", serif;
 
 const SquareRet = styled.div`
 background: #282B2F;
-padding:5% 12%;
+text-align:center;
+padding:5% 0%;
 border-radius:4px;
 width:100%;
 `
@@ -287,6 +311,9 @@ color: #ffffff;
 
 const Cardarticle = styled.div`
 display:flex;
+flex-flow: row;
+gap:10px;
+justify-content:center;
 align-items:center;
 `
 const Articlecol = styled.div`
@@ -297,8 +324,8 @@ align-items:center;
 `
 
 const IconGroup = styled.div`
-height:60px;
-width:60px;
+height:60px !important;
+width:60px  !important;
 background-color: #282B2F;
 display:flex;
 align-items:center;
@@ -314,6 +341,13 @@ height:1.5px;
 margin-top:4%;
 margin-bottom:4%;
 `
+const GroupDate = styled.div`
+display:flex;
+flex-flow:column;
+align-items:center;
+justify-content:center;
+width:100%;
+`
 
 const Dashboard = () => {
   const [userId] = useState(1);
@@ -328,27 +362,41 @@ const Dashboard = () => {
     totalGastos: 0,
   });
   const [hasTransactions, setHasTransactions] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
 
+  const month = selectedDate.getMonth() + 1;
+  const year = selectedDate.getFullYear();
 
   useEffect(() => {
     Promise.all([
-      axios.get("http://localhost:8081/api/currentamount"),
-      axios.get("http://localhost:8081/api/spenttotal"),
-      axios.get("http://localhost:8081/api/earntotal"),
-      axios.get("http://localhost:8081/api/releasedamount")
+      axios.get(`http://localhost:8081/api/currentamountbmonth/${year}/${month}`),
+      axios.get(`http://localhost:8081/api/spenttotalbmonth/${year}/${month}`),
+      axios.get(`http://localhost:8081/api/earntotalbmonth/${year}/${month}`),
+      axios.get(`http://localhost:8081/api/releasedamountbmonth/${year}/${month}`)
     ])
       .then(([response1, response2, response3, response4]) => {
         setCurrentamnt(response1.data.saldo_atual);
         setSpendtotal(response2.data.total_gastos);
         setEarntotal(response3.data.total_ganho);
         setReleasedamnt(response4.data.saldo_liberado);
-
       })
       .catch((error) => {
         console.error("Erro ao buscar saldo atual, saldo liberado, gastos e ganhos totais:", error);
       });
-  }, []);
+  }, [selectedDate]); // Recarregar os dados quando a data for alterada
+
+  const handlePrevMonth = () => {
+    const prevMonth = new Date(selectedDate);
+    prevMonth.setMonth(prevMonth.getMonth() - 1); // Decrementa o mês
+    setSelectedDate(prevMonth);
+  };
+
+  const handleNextMonth = () => {
+    const nextMonth = new Date(selectedDate);
+    nextMonth.setMonth(nextMonth.getMonth() + 1); // Incrementa o mês
+    setSelectedDate(nextMonth);
+  };
 
 
   return (
@@ -356,72 +404,58 @@ const Dashboard = () => {
       <Navbarui />
       <BodyGroup>
         <Title>Bem-vindo ao Dashboard</Title>
-        {hasTransactions ? (
-          <GroupWelcome>
-            <GroupLine>
-              <h3>Informações financeiras do usuário</h3>
-              <p>Saldo Liberado: R${releasedamnt}</p>
-              <p>Saldo Atual: R${userInfo.saldoAtual}</p>
-              <p>Total de Ganhos: R${userInfo.totalGanhos}</p>
-              <p>Total de Despesas: R${userInfo.totalGastos}</p>
-            </GroupLine>
-          </GroupWelcome>
-
-        ) : (
-
-          <GroupWelcome>
-            <GroupLine>
-              <DateContent>
-                {new Date().toLocaleString("pt-BR", { month: "long" })} -{" "}
-                {getCurrentDate()}
-              </DateContent>
-              <Elipse>
-                <Lottie options={defaultOptions} height={120} width={80} />
-              </Elipse>
-              <Content>Aqui está o conteúdo do seu Dashboard.</Content>
-              <SmallContent>
-                Para começarmos a monitorar insira os dados da sua renda
-              </SmallContent>
-              <Row>
-                <Link to={'/Starthere'}>
-                  <Button >
-                    ㅤAdicionar Transação
-                  </Button>
-                </Link>
-              </Row>
-            </GroupLine>
-          </GroupWelcome>
-        )}
-        <Title>Destaques</Title>
+      
         <GroupWelcome>
           <GroupLine>
-
-
             <RowCustom>
-              <Diviser>
-                <DateMin>{new Date().toLocaleString("pt-BR", { month: "long" })}{"ㅤ"}{getCurrentDate()}</DateMin>
-              </Diviser>
-              <Diveser>
-                <ColumnCustom>
-                  <SquareRet>
-                   <Squaretxt>Saldo Liberado</Squaretxt>
-                  </SquareRet>
-                  <Sp>R$ {releasedamnt}</Sp>
-                </ColumnCustom>
-              </Diveser>
+
+              <GroupDate>
+                <Diviser>
+                  {/* Exibe o mês/ano atual e a data de hoje */}
+                  <DateMin>
+                  ㅤ {selectedDate.toLocaleString("pt-BR", { month: "long" })}
+                    {" ㅤ "}
+                   
+                    <Diveser>
+                  <ArrowButton onClick={handlePrevMonth}>
+                    <FontAwesomeIcon icon={faChevronLeft} fontSize={20}/>
+                  </ArrowButton>
+                  <DatePicker
+                    selected={selectedDate}
+                    onChange={(date) => setSelectedDate(date)}
+                    dateFormat="MM/yyyy"
+                    showMonthYearPicker
+                    showFullMonthYearPicker
+                    customInput={<Button />}
+                  />
+                  <ArrowButton onClick={handleNextMonth}>
+                    <FontAwesomeIcon icon={faChevronRight} fontSize={20}/>
+                  </ArrowButton>
+                </Diveser>
+                  </DateMin>
+                </Diviser>
+
+                {/* Navegação de meses */}
+               
+              </GroupDate>
+
+              <ColumnCustom>
+                <SquareRet>
+                  <Squaretxt>Saldo Liberado</Squaretxt>
+                </SquareRet>
+                <Sp>R$ {releasedamnt}</Sp>
+              </ColumnCustom>
             </RowCustom>
-
-
 
             <RowLeft>
               <Cardarticle>
                 <IconGroup>
-                  <FontAwesomeIcon icon={faMoneyBill} fontSize={21}/>
+                  <FontAwesomeIcon icon={faMoneyBill} fontSize={21} />
                 </IconGroup>
-                <ColumnCustom>
-                <SpanColor>Saldo Atual</SpanColor>
-                <Mp>R$ {currentamnt}</Mp>
-                </ColumnCustom>
+                <CollumTypeIcon>
+                  <SpanColor>Saldo Atual - Trabalhar</SpanColor>
+                  <Mp>R$ {currentamnt}</Mp>
+                </CollumTypeIcon>
               </Cardarticle>
             </RowLeft>
 
@@ -431,37 +465,41 @@ const Dashboard = () => {
             <RowGroup>
               <Articlecol>
                 <IconGroup>
-                  <FontAwesomeIcon icon={faReceipt} fontSize={21}/>
+                  <FontAwesomeIcon icon={faReceipt} fontSize={21} />
                 </IconGroup>
                 <ColumnCustom>
-                <SpanColorMinus>Total <br/>Despesas</SpanColorMinus>
-                <MpMinus>R$ {currentamnt}</MpMinus>
+                  <SpanColorMinus>Total <br />Despesas</SpanColorMinus>
+                  <MpMinus>R$ {spenttotal}</MpMinus>
                 </ColumnCustom>
               </Articlecol>
 
               <Articlecol>
                 <IconGroup>
-                  <FontAwesomeIcon icon={faMoneyBillWave} fontSize={21}/>
+                  <FontAwesomeIcon icon={faMoneyBillWave} fontSize={21} />
                 </IconGroup>
                 <ColumnCustom>
-                <SpanColorMinus>Total <br/>Ganhos</SpanColorMinus>
-                <MpGain>R$ {currentamnt}</MpGain>
+                  <SpanColorMinus>Total <br />Ganhos</SpanColorMinus>
+                  <MpGain>R$ {earntotal}</MpGain>
                 </ColumnCustom>
               </Articlecol>
 
               <Articlecol>
                 <IconGroup>
-                  <FontAwesomeIcon icon={faCreditCard} fontSize={21}/>
+                  <FontAwesomeIcon icon={faCreditCard} fontSize={21} />
                 </IconGroup>
                 <ColumnCustom>
-                <SpanColorMinus>Total <br/>Fatura</SpanColorMinus>
-                <MpGain>R$ {earntotal}</MpGain>
+                  <SpanColorMinus>Total <br />Fatura</SpanColorMinus>
+                  <MpGain>R$ none</MpGain>
                 </ColumnCustom>
               </Articlecol>
 
             </RowGroup>
+
           </GroupLine>
         </GroupWelcome>
+
+
+
         <Title>Atalhos</Title>
         <BoxAtalhos />
         <Title>Destaques</Title>
