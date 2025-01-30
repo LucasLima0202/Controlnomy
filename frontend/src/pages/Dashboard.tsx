@@ -12,7 +12,7 @@ import BoxGlobal from "../components/BoxGlobal";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight, faChevronLeft, faChevronRight, faCreditCard, faIceCream, faMoneyBill, faMoneyBill1Wave, faMoneyBills, faMoneyBillWave, faReceipt } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faArrowRight, faChevronLeft, faChevronRight, faCreditCard, faIceCream, faMoneyBill, faMoneyBill1Wave, faMoneyBills, faMoneyBillWave, faReceipt, faSeedling } from "@fortawesome/free-solid-svg-icons";
 // import { Link } from 'react-scroll';
 
 const defaultOptions = {
@@ -350,25 +350,20 @@ width:100%;
 `
 
 const Dashboard = () => {
-  const [userId] = useState(1);
   const [releasedamnt, setReleasedamnt] = useState(null);
   const [currentamnt, setCurrentamnt] = useState(null);
   const [spenttotal, setSpendtotal] = useState(null);
   const [earntotal, setEarntotal] = useState(null);
-  const [userInfo, setUserInfo] = useState({
-    saldoLiberado: 0,
-    saldoAtual: 0,
-    totalGanhos: 0,
-    totalGastos: 0,
-  });
-  const [hasTransactions, setHasTransactions] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-
-  const month = selectedDate.getMonth() + 1;
-  const year = selectedDate.getFullYear();
+  const month = selectedDate.getMonth() + 1;  // Mês atual (1-12)
+  const year = selectedDate.getFullYear();   // Ano atual
 
   useEffect(() => {
+    // Recarregar os dados do saldo atual e liberado ao mudar o mês
+    const month = selectedDate.getMonth() + 1;
+    const year = selectedDate.getFullYear();
+  
     Promise.all([
       axios.get(`http://localhost:8081/api/currentamountbmonth/${year}/${month}`),
       axios.get(`http://localhost:8081/api/spenttotalbmonth/${year}/${month}`),
@@ -382,9 +377,9 @@ const Dashboard = () => {
         setReleasedamnt(response4.data.saldo_liberado);
       })
       .catch((error) => {
-        console.error("Erro ao buscar saldo atual, saldo liberado, gastos e ganhos totais:", error);
+        console.error("Erro ao buscar dados do mês:", error);
       });
-  }, [selectedDate]); // Recarregar os dados quando a data for alterada
+  }, [selectedDate]);
 
   const handlePrevMonth = () => {
     const prevMonth = new Date(selectedDate);
@@ -398,7 +393,6 @@ const Dashboard = () => {
     setSelectedDate(nextMonth);
   };
 
-
   return (
     <WholeSite>
       <Navbarui />
@@ -409,37 +403,32 @@ const Dashboard = () => {
           <GroupLine>
             <RowCustom>
 
-              <GroupDate>
+            <GroupDate>
                 <Diviser>
                   {/* Exibe o mês/ano atual e a data de hoje */}
                   <DateMin>
-                  ㅤ {selectedDate.toLocaleString("pt-BR", { month: "long" })}
-                    {" ㅤ "}
-                   
+                    {selectedDate.toLocaleString("pt-BR", { month: "long" })}
+                    {" "}
                     <Diveser>
-                  <ArrowButton onClick={handlePrevMonth}>
-                    <FontAwesomeIcon icon={faChevronLeft} fontSize={20}/>
-                  </ArrowButton>
-                  <DatePicker
-                    selected={selectedDate}
-                    onChange={(date) => setSelectedDate(date)}
-                    dateFormat="MM/yyyy"
-                    showMonthYearPicker
-                    showFullMonthYearPicker
-                    customInput={<Button />}
-                  />
-                  <ArrowButton onClick={handleNextMonth}>
-                    <FontAwesomeIcon icon={faChevronRight} fontSize={20}/>
-                  </ArrowButton>
-                </Diveser>
+                      <ArrowButton onClick={handlePrevMonth}>
+                        <FontAwesomeIcon icon={faChevronLeft} fontSize={20}/>
+                      </ArrowButton>
+                      <DatePicker
+                        selected={selectedDate}
+                        onChange={date => setSelectedDate(date)}
+                        dateFormat="MM/yyyy"
+                        showMonthYearPicker
+                        customInput={<Button />}
+                      />
+                      <ArrowButton onClick={handleNextMonth}>
+                        <FontAwesomeIcon icon={faChevronRight} fontSize={20}/>
+                      </ArrowButton>
+                    </Diveser>
                   </DateMin>
                 </Diviser>
-
-                {/* Navegação de meses */}
-               
               </GroupDate>
 
-              <ColumnCustom>
+            <ColumnCustom>
                 <SquareRet>
                   <Squaretxt>Saldo Liberado</Squaretxt>
                 </SquareRet>
@@ -485,11 +474,11 @@ const Dashboard = () => {
 
               <Articlecol>
                 <IconGroup>
-                  <FontAwesomeIcon icon={faCreditCard} fontSize={21} />
+                  <FontAwesomeIcon icon={faSeedling} fontSize={21} />
                 </IconGroup>
                 <ColumnCustom>
-                  <SpanColorMinus>Total <br />Fatura</SpanColorMinus>
-                  <MpGain>R$ none</MpGain>
+                  <SpanColorMinus>Total <br />Invest</SpanColorMinus>
+                  <MpGain></MpGain>
                 </ColumnCustom>
               </Articlecol>
 
