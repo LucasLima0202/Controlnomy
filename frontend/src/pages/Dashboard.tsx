@@ -5,12 +5,13 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Importando o estilo para o DatePicker
 import BoxAtalhos from "../components/BoxHotkey";
 import BoxGlobal from "../components/BoxGlobal";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight,  faMoneyBill,  faMoneyBillWave,  faReceipt, faSeedling } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight, faMoneyBill, faMoneyBillWave, faReceipt, faSeedling } from "@fortawesome/free-solid-svg-icons";
 import Chartone from "../components/charts/chart_one/chartone";
 import { BarChart } from '@mui/x-charts/BarChart';
+import { PieChart } from "@mui/x-charts";
 
 // import { Link } from 'react-scroll';
 
@@ -347,14 +348,7 @@ align-items:center;
 justify-content:center;
 width:100%;
 `
-const uData = [40, 70, 20 ];
-const pData = [70, 30, 12];
-const xLabels = [
-  'Page A',
-  'Page B',
-  'Page C',
 
-];
 
 const Dashboard = () => {
   const [releasedamnt, setReleasedamnt] = useState(null);
@@ -370,7 +364,7 @@ const Dashboard = () => {
     // Recarregar os dados do saldo atual e liberado ao mudar o mês
     const month = selectedDate.getMonth() + 1;
     const year = selectedDate.getFullYear();
-  
+
     Promise.all([
       axios.get(`http://localhost:8081/api/currentamountbmonth/${year}/${month}`),
       axios.get(`http://localhost:8081/api/spenttotalbmonth/${year}/${month}`),
@@ -388,6 +382,14 @@ const Dashboard = () => {
       });
   }, [selectedDate]);
 
+  const uData = [earntotal];
+  const pData = [spenttotal];
+  const xLabels = [
+    'Week 1',
+    'Week 2',
+    'Week 3',
+    'Week 4',
+  ];
   const handlePrevMonth = () => {
     const prevMonth = new Date(selectedDate);
     prevMonth.setMonth(prevMonth.getMonth() - 1); // Decrementa o mês
@@ -405,12 +407,12 @@ const Dashboard = () => {
       <Navbarui />
       <BodyGroup>
         <Title>Bem-vindo ao Dashboard</Title>
-      
+
         <GroupWelcome>
           <GroupLine>
             <RowCustom>
 
-            <GroupDate>
+              <GroupDate>
                 <Diviser>
                   {/* Exibe o mês/ano atual e a data de hoje */}
                   <DateMin>
@@ -418,7 +420,7 @@ const Dashboard = () => {
                     {" "}
                     <Diveser>
                       <ArrowButton onClick={handlePrevMonth}>
-                        <FontAwesomeIcon icon={faChevronLeft} fontSize={20}/>
+                        <FontAwesomeIcon icon={faChevronLeft} fontSize={20} />
                       </ArrowButton>
                       <DatePicker
                         selected={selectedDate}
@@ -428,14 +430,14 @@ const Dashboard = () => {
                         customInput={<Button />}
                       />
                       <ArrowButton onClick={handleNextMonth}>
-                        <FontAwesomeIcon icon={faChevronRight} fontSize={20}/>
+                        <FontAwesomeIcon icon={faChevronRight} fontSize={20} />
                       </ArrowButton>
                     </Diveser>
                   </DateMin>
                 </Diviser>
               </GroupDate>
 
-            <ColumnCustom>
+              <ColumnCustom>
                 <SquareRet>
                   <Squaretxt>Saldo Liberado</Squaretxt>
                 </SquareRet>
@@ -500,18 +502,43 @@ const Dashboard = () => {
         <BoxAtalhos />
         <Title>Destaques</Title>
         <Chartone>
-        <BarChart
-        width={400}
-        height={240
-        }
-        series={[
-          { data: pData, label: 'pv', id: 'pvId' },
-          { data: uData, label: 'uv', id: 'uvId' },
-        ]}
-        xAxis={[{ data: xLabels, scaleType: 'band' }]}
-      />
+          <BarChart
+            width={400}
+            height={240
+            }
+            series={[
+              { data: pData, label: 'Despesas  ', id: 'pvId' },
+              { data: uData, label: 'Ganho', id: 'uvId' },
+            ]}
+            xAxis={[{ data: xLabels, scaleType: 'band' }]}
+          />
         </Chartone>
+        <Title>Destaques</Title>
+        <Chartone>
+          
+          <PieChart
+            series={[
+              {
+                data: [
+                  { id: 0, value: 10, label: 'categories.name' },
+                  { id: 1, value: 15, label: 'categories.name' },
+                  { id: 2, value: 20, label: 'categories.name' },
+                ],
+              },
+            ]}
+            width={400}
+            height={200}
+          />
+        </Chartone>
+        {/* 
+Inserir 3 graficos
 
+grafico de gasto mensal entre ganhos e despesas(por semana)
+grafico anual de qnt e gasto por categoria
+grafico de fluxo de dinheiro
+
+
+*/}
       </BodyGroup>
     </WholeSite>
   );
