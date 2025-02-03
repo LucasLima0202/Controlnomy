@@ -8,6 +8,7 @@ import Transactions from "./pages/Transactions";
 import EditTransactions from "./pages/EditTransactions";
 import StartHereForm from "./pages/Start";
 import RedirectPage from "./pages/Redirect";
+import SettingsPage from "./pages/Settings";
 
 const App: React.FC = () => {
   // const { isAuthenticated, setIsAuthenticated } = useAuth();
@@ -32,6 +33,7 @@ const App: React.FC = () => {
         <Route path="/EditTransactions" element={<EditTransactions/>} />
         <Route path="/StartHere" element={<StartHereForm></StartHereForm>}/>
         {/* <Route path="/Dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/Login" />} /> */}
+        <Route path="/Settings" element={<SettingsPage></SettingsPage>}/>
         <Route path="/Dashboard" element={<Dashboard />} />
 
       </Routes>

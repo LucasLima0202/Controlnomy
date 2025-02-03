@@ -1,7 +1,7 @@
 // Importações necessárias
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 
@@ -159,6 +159,12 @@ const DropdownItem = styled.a`
   padding-top:9%;
   font-size: 1.1rem;
   margin-bottom: 1rem;
+  text-decoration:none !important;
+
+  a{
+    text-decoration:none !important;
+
+  }
   &:hover {
     color: #aaa;
   }
@@ -182,6 +188,12 @@ width:100%;
   width:90%;
   }
 `;
+
+const Linkcustom = styled.a`
+text-decoration:none !important;
+color: #FFFFFF;
+
+`
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -214,13 +226,19 @@ const Navbar = () => {
       <DropdownMenu isOpen={menuOpen}>
         <CloseButton onClick={handleToggleMenu}>×</CloseButton>
         <DropdownItem href="#" onClick={handleToggleMenu}>
-          Home
+        <Link to={'/dashboard'}>
+        <Linkcustom>Dashboard</Linkcustom>
+        </Link>          
         </DropdownItem>
         <DropdownItem href="#" onClick={handleToggleMenu}>
-          Dashboard
+        <Link to={'/transactions'}>
+        <Linkcustom>Transações</Linkcustom>
+        </Link>          
         </DropdownItem>
         <DropdownItem href="#" onClick={handleToggleMenu}>
-          Settings
+        <Link to={'/settings'}>
+        <Linkcustom>Settings</Linkcustom>
+        </Link>          
         </DropdownItem>
         <DropdownItem onClick={handleLogout}>
           <ButtonLogout>Logout</ButtonLogout>

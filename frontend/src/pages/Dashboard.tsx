@@ -1,18 +1,17 @@
 import styled from "styled-components";
 import Navbarui from "../components/Navbar";
-import { getCurrentDate } from "../utils/data"; // Ajuste o caminho conforme necessário
-import Lottie from "react-lottie";
 import animationData from "../assets/lotties/welcome.json"
-import { Link, useNavigate } from "react-router-dom";
-import BoxInsight from "../components/BoxHotkey";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Importando o estilo para o DatePicker
 import BoxAtalhos from "../components/BoxHotkey";
 import BoxGlobal from "../components/BoxGlobal";
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight, faChevronLeft, faChevronRight, faCreditCard, faIceCream, faMoneyBill, faMoneyBill1Wave, faMoneyBills, faMoneyBillWave, faReceipt, faSeedling } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight,  faMoneyBill,  faMoneyBillWave,  faReceipt, faSeedling } from "@fortawesome/free-solid-svg-icons";
+import Chartone from "../components/charts/chart_one/chartone";
+import { BarChart } from '@mui/x-charts/BarChart';
+
 // import { Link } from 'react-scroll';
 
 const defaultOptions = {
@@ -348,6 +347,14 @@ align-items:center;
 justify-content:center;
 width:100%;
 `
+const uData = [40, 70, 20 ];
+const pData = [70, 30, 12];
+const xLabels = [
+  'Page A',
+  'Page B',
+  'Page C',
+
+];
 
 const Dashboard = () => {
   const [releasedamnt, setReleasedamnt] = useState(null);
@@ -492,8 +499,18 @@ const Dashboard = () => {
         <Title>Atalhos</Title>
         <BoxAtalhos />
         <Title>Destaques</Title>
-        <BoxGlobal />
-
+        <Chartone>
+        <BarChart
+        width={400}
+        height={240
+        }
+        series={[
+          { data: pData, label: 'pv', id: 'pvId' },
+          { data: uData, label: 'uv', id: 'uvId' },
+        ]}
+        xAxis={[{ data: xLabels, scaleType: 'band' }]}
+      />
+        </Chartone>
 
       </BodyGroup>
     </WholeSite>
