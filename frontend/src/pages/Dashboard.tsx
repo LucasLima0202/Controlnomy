@@ -8,10 +8,12 @@ import BoxGlobal from "../components/BoxGlobal";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight, faMoneyBill, faMoneyBillWave, faReceipt, faSeedling } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight, faMoneyBill, faMoneyBillWave, faPlus, faReceipt, faSeedling } from "@fortawesome/free-solid-svg-icons";
 import Chartone from "../components/charts/chart_one/chartone";
 import { BarChart } from '@mui/x-charts/BarChart';
 import { PieChart } from "@mui/x-charts";
+import ListLimit from "../components/comptransactions/ListLimit";
+import { Link } from "react-router-dom";
 
 // import { Link } from 'react-scroll';
 
@@ -62,6 +64,10 @@ cursor: pointer;
 font-size: 1.5rem;
 color: #768598;
 `;
+const ContainerRow = styled.div`
+display: flex;
+flex-flow: row;
+`
 
 const BodyGroup = styled.div`
   width: 100%;
@@ -91,6 +97,17 @@ const WholeSite = styled.div`
   color: #343A40;
 `;
 
+const ContentIl = styled.div`
+  font-size: 1.2rem;
+  text-align: left;
+  color: #4b4b4b;
+  line-height:30px;
+  margin-top:5%;
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+`;
+
 const Title = styled.h1`
   margin-top:4%;
   font-size: 1.5rem;
@@ -99,36 +116,35 @@ const Title = styled.h1`
   margin-bottom: 20px;
 `;
 
-const Content = styled.h1`
-  font-size: 1.5rem;
-  text-align: center;
-  color: #343A40;
+const ButtonBIg = styled.button`
+  outline: none;
+  border: none;
   font-weight: 600;
-  margin-bottom: 1%;
-  margin-top:4%;
-  @media (max-width: 768px) {
-    font-size: 1.2rem;
+  width: 100%;
+  height: 10.5rem;
+  background: ${({ bgcolor }) => bgcolor || '#282B2F'};  // Usar a cor de fundo fornecida ou o valor padrão
+  color: ${({ color }) => color || '#fff'};  // Usar a cor fornecida ou o valor padrão
+  font-size: ${({ fontsize }) => fontsize || '16px'};  // Usar o fontsize fornecido ou o valor padrão
+  margin-bottom: 5%;
+  margin-top: 5%;
+  letter-spacing: 0.5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all ease-in-out 0.5s;
+  padding-left:5%;
+  padding-right:5%;
+
+
+  &:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 100px rgba(131, 131, 131, 0.767);
   }
-`;
-const SmallContent = styled.div`
-  font-size: 1.2rem;
-  text-align: center;
-  color: #4b4b4b;
-  line-height:30px;
-  margin-top:1%;
-  @media (max-width: 768px) {
-    font-size: 1rem;
+
+  &:focus {
+    outline: none;
   }
 `
 
-const DateContent = styled.div`
-font-size: 1rem;
-padding-top:1%;
-margin-bottom:2%;
-text-align: center;
-margin-bottom: 5px;
-color:#777777;
-`
 
 const GroupWelcome = styled.div`
 width:80%;
@@ -173,7 +189,17 @@ display:flex;
 width:100%;
 align-items: stretch;
 `
-
+const TitleSmall = styled.h1`
+  font-size: 1.5rem;
+  text-align: left;
+  color: #343A40;
+  font-weight: 600;
+  margin-bottom: 2%;
+  margin-top:5%;
+ padding-right:10%;
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }`
 
 const RowCustom = styled.div`
 display:flex;
@@ -236,7 +262,15 @@ span{
 padding-left:10px;
 }
 `
-
+const ColumButton = styled.div`
+display:flex;
+flex-flow: column nowrap;
+justify-content:stretch;
+align-self:stretch;
+align-items:stretch;
+gap: 20px !important;
+width:100%;
+`
 
 const CollumTypeIcon = styled.div`
 display:flex;
@@ -348,7 +382,22 @@ align-items:center;
 justify-content:center;
 width:100%;
 `
+interface WeeklySpending {
+  week: number;
+  total_gastos: string;
+  total_ganhos: string;
+}
 
+interface CategorySpending {
+  categoria: string;
+  total_gasto: string;
+}
+
+interface MoneyFlow {
+  mes: string;
+  total_gastos: string;
+  total_ganhos: string;
+}
 
 const Dashboard = () => {
   const [releasedamnt, setReleasedamnt] = useState(null);
@@ -360,25 +409,43 @@ const Dashboard = () => {
   const month = selectedDate.getMonth() + 1;  // Mês atual (1-12)
   const year = selectedDate.getFullYear();   // Ano atual
 
+ // variavels de grafico 
+
+ const pastelColors = [
+  "#99d98c", "#76c893", "#52b69a", "#34a0a4", "#168aad",
+  "#1a759f", "#1e6091", "#184e77", "#0a9396", "#ee9b00",
+  "#ca6702", "#bb3e03", "#ae2012", "#9b2226", "#6a040f"
+];
+const getCategoryColor = (index: number) => pastelColors[index % pastelColors.length]; // Garante um loop nas cores
+
+ const [weeklySpending, setWeeklySpending] = useState<WeeklySpending[]>([]);
+ const [categorySpending, setCategorySpending] = useState<CategorySpending[]>([]);
+ const [moneyFlow, setMoneyFlow] = useState<MoneyFlow[]>([]);
+
   useEffect(() => {
-    // Recarregar os dados do saldo atual e liberado ao mudar o mês
-    const month = selectedDate.getMonth() + 1;
+      const month = selectedDate.getMonth() + 1;
     const year = selectedDate.getFullYear();
 
     Promise.all([
       axios.get(`http://localhost:8081/api/currentamountbmonth/${year}/${month}`),
       axios.get(`http://localhost:8081/api/spenttotalbmonth/${year}/${month}`),
       axios.get(`http://localhost:8081/api/earntotalbmonth/${year}/${month}`),
-      axios.get(`http://localhost:8081/api/releasedamountbmonth/${year}/${month}`)
+      axios.get(`http://localhost:8081/api/releasedamountbmonth/${year}/${month}`),
+      axios.get<WeeklySpending[]>(`http://localhost:8081/api/chart_weekly_spending/${year}/${month}`),
+      axios.get<CategorySpending[]>(`http://localhost:8081/api/chart_category_spending/${year}`),
+      axios.get<MoneyFlow[]>(`http://localhost:8081/api/chart_money_flow/${year}`)
     ])
-      .then(([response1, response2, response3, response4]) => {
+      .then(([response1, response2, response3, response4, weeklyResponse, categoryResponse, moneyFlowResponse]) => {
         setCurrentamnt(response1.data.saldo_atual);
         setSpendtotal(response2.data.total_gastos);
         setEarntotal(response3.data.total_ganho);
         setReleasedamnt(response4.data.saldo_liberado);
+        setWeeklySpending(weeklyResponse.data);
+        setCategorySpending(categoryResponse.data);
+        setMoneyFlow(moneyFlowResponse.data);
       })
       .catch((error) => {
-        console.error("Erro ao buscar dados do mês:", error);
+        console.error("Erro ao buscar dados do mês e dos gráficos:", error);
       });
   }, [selectedDate]);
 
@@ -500,45 +567,66 @@ const Dashboard = () => {
 
         <Title>Atalhos</Title>
         <BoxAtalhos />
-        <Title>Destaques</Title>
+        <Title>Gastos Semanais ({selectedDate.toLocaleString("pt-BR", { month: "long" })})</Title>
         <Chartone>
-          <BarChart
-            width={400}
-            height={240
-            }
-            series={[
-              { data: pData, label: 'Despesas  ', id: 'pvId' },
-              { data: uData, label: 'Ganho', id: 'uvId' },
-            ]}
-            xAxis={[{ data: xLabels, scaleType: 'band' }]}
-          />
+        <BarChart
+          width={400}
+          height={240}
+          series={[
+            { data: weeklySpending.map(w => parseFloat(w.total_gastos)), label: "Gastos", color: "#B53535" },
+            { data: weeklySpending.map(w => parseFloat(w.total_ganhos)), label: "Ganhos", color: "#41805A" },
+          ]}
+          xAxis={[{ data: weeklySpending.map(w => `Semana ${w.week}`), scaleType: "band" }]}
+        />
         </Chartone>
-        <Title>Destaques</Title>
+        <Title>Gastos por Categoria ({year})</Title>
         <Chartone>
+        <PieChart
+           series={[{
+            data: categorySpending.map((c, index) => ({
+              id: c.categoria,
+              value: parseFloat(c.total_gasto),
+              label: c.categoria,
+              color: getCategoryColor(index) // Define uma cor dinâmica para cada categoria
+            })),
+          }]}
           
-          <PieChart
-            series={[
-              {
-                data: [
-                  { id: 0, value: 10, label: 'categories.name' },
-                  { id: 1, value: 15, label: 'categories.name' },
-                  { id: 2, value: 20, label: 'categories.name' },
-                ],
-              },
-            ]}
-            width={400}
-            height={200}
-          />
+          width={400}
+          height={240}
+        />
         </Chartone>
-        {/* 
-Inserir 3 graficos
-
-grafico de gasto mensal entre ganhos e despesas(por semana)
-grafico anual de qnt e gasto por categoria
-grafico de fluxo de dinheiro
-
-
-*/}
+        <Title>Fluxo de Dinheiro ({year})</Title>
+        <Chartone>
+        <BarChart
+          width={400}
+          height={240}
+          series={[
+            { data: moneyFlow.map(m => parseFloat(m.total_gastos)), label: "Gastos", color: "#B53535" },
+            { data: moneyFlow.map(m => parseFloat(m.total_ganhos)), label: "Ganhos", color: "#41805A" },
+          ]}
+          xAxis={[{ data: moneyFlow.map(m => `Mês ${m.mes}`), scaleType: "band" }]}
+        />
+        </Chartone>
+        <Title>Ultimas Transações</Title>
+        <ListLimit/>
+        <Title>Registre suas Transações</Title>
+        <Chartone>
+          <ContainerRow>           
+           <ColumnCustom>
+            <TitleSmall>
+            Gerencie suas Finanças
+            </TitleSmall>
+            <ContentIl>Acompanhe sua evolução financeira no Dashboard</ContentIl>
+            </ColumnCustom>
+            <ColumButton>
+            <Link to="/transactions">
+            <ButtonBIg>
+              <FontAwesomeIcon icon={faPlus}/>
+            </ButtonBIg>
+            </Link>
+            </ColumButton>
+          </ContainerRow>
+        </Chartone>
       </BodyGroup>
     </WholeSite>
   );

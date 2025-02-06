@@ -134,4 +134,17 @@ router.get("/transactionslist", (req, res) => {
   });
 });
 
+
+
+router.get("/limit_transactionslist", (req, res) => {
+  const sql = "SELECT * FROM transactions ORDER BY date DESC LIMIT 5"; // Ordena por data, as mais recentes primeiro
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Erro ao buscar transações:", err);
+      return res.status(500).json({ message: "Erro ao buscar transações" });
+    }
+    res.status(200).json(results); // Retorna os dados encontrados
+  });
+});
+
 module.exports = router;
