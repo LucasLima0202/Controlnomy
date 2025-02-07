@@ -20,6 +20,26 @@ router.post("/register", (req, res) => {
   });
 });
 
+router.post("/alteregister", (req, res) => {
+  const { new_name, new_email, new_password } = req.body; // Pegando os valores do corpo da requisição
+
+  const sql = `
+  UPDATE users 
+  SET name = ?, email = ?, password = ?
+  WHERE id_user = 1
+  `;
+  const values = [new_name, new_email, new_password];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Erro ao atualizar Valores:", err);
+      return res.status(500).json({ message: "Erro ao atualizar valores no banco de dados.", error: err });
+    }
+    res.status(200).json({ message: "Valores atualizados com sucesso!" });
+  });
+});
+
+
 router.post("/starthereregistevalue", (req, res) => {
   const { total_amount, released_amount, percent_invest } = req.body;
 
@@ -45,7 +65,21 @@ router.post("/starthereregistevalue", (req, res) => {
 
 
 
+router.get("/getuser", (req, res) => {
+  const sql = "SELECT name, email, password FROM users WHERE id_user = 1"; // Ajuste conforme necessário
 
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Erro ao buscar usuário:", err);
+      return res.status(500).json({ message: "Erro ao buscar usuário" });
+    }
+    if (result.length > 0) {
+      res.status(200).json(result[0]); // Retorna os dados do usuário
+    } else {
+      res.status(404).json({ message: "Usuário não encontrado" });
+    }
+  });
+});
 
 
 

@@ -25,7 +25,7 @@ const App: React.FC = () => {
       <Routes>
         {/* <Route path="/" element={isAuthenticated ? <Navigate to="/Dashboard" /> : <Navigate to="/Login" />} /> */}
         <Route path="/" element={<Navigate to="/Login" />} />
-
+        
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/Transactions" element={<Transactions />}/>

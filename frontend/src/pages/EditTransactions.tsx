@@ -33,6 +33,7 @@ const Body = styled.body`
   align-items: center;
   justify-content: flex-start;
   color: #343A40;
+  
 `;
 
 

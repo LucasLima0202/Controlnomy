@@ -87,7 +87,9 @@ const BoxAtalhos = () => {
            
           </InfoIcon>
           <InfoIcon>
+          <Link to="/settings">
             <CenterIcon icon={faGear} />
+            </Link>
             <Span>Configurações Gerais</Span>
           </InfoIcon>
         </SlideContainer>
