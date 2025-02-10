@@ -22,6 +22,11 @@ const Button = styled.button`
   transition: 0.5s;
   transition-property: border-left, border-right, box-shadow;
 
+  @media (max-width: 668px) {
+    font-size: 0.9rem;
+    width: 80%;
+  }
+
   &:hover {
    
     box-shadow: 0 0 30px rgba(131, 131, 131, 0.278);
@@ -57,6 +62,12 @@ line-height: 150%;
 font-weight:600;
 width:80%;
 text-align: center;
+
+@media (max-width: 668px) {
+    font-size: 1.59rem;
+    line-height: 180%;
+    width: 80%;
+  }
 `
 
 const BlurredEllipseLeft = styled.div`
