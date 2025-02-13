@@ -399,7 +399,7 @@ interface MoneyFlow {
   total_ganhos: string;
 }
 
-const Dashboard = () => {
+const Dashboard = ()  => {
   const [releasedamnt, setReleasedamnt] = useState(null);
   const [currentamnt, setCurrentamnt] = useState(null);
   const [spenttotal, setSpendtotal] = useState(null);

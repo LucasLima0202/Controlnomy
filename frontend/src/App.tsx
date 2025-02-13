@@ -76,12 +76,13 @@ import StartHereForm from "./pages/Start";
 import RedirectPage from "./pages/Redirect";
 import SettingsPage from "./pages/Settings";
 import ProtectedRoute from "./hooks/ProtectedRoute"; // Importando o Wrapper
+import Initialization from "./pages/Initialization";
 
 const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/Login" />} />
+        <Route path="/" element={<Initialization />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
 
