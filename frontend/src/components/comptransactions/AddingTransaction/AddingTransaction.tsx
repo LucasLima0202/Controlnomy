@@ -32,6 +32,12 @@ interface TransactionData {
   category: string;
   description: string;
 }
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  return {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+};
 
 const AddingTransaction = () => {
   const [values, setValues] = useState<TransactionData>({
@@ -60,7 +66,7 @@ const AddingTransaction = () => {
   
 
   useEffect(() => {
-    axios.get("http://localhost:8081/api/categories")
+    axios.get("http://localhost:8081/api/categories",getAuthHeaders())
       .then((response) => {
         setCategories(response.data);
       })
@@ -81,15 +87,20 @@ const AddingTransaction = () => {
     console.log("Valores enviados ao backend:", values);
   
     try {
-      const response = await axios.post("http://localhost:8081/api/transaction", {
-        value: values.value,
-        type: values.type, // Deve ser boolean: true ou false
-        category: parseInt(values.category), // Converte categoria para número
-        description: values.description,
-      });
+      const response = await axios.post(
+        "http://localhost:8081/api/transaction",
+        {
+          value: values.value,
+          type: values.type, // Deve ser boolean: true ou false
+          category: parseInt(values.category), // Converte categoria para número
+          description: values.description,
+        },
+        getAuthHeaders()
+      );
+  
       alert(response.data.message);
   
-      // Resetando os valores do formulário
+      // Resetando os valores do formulário sem recarregar a página
       setValues({
         value: 0,
         type: false,
@@ -98,9 +109,7 @@ const AddingTransaction = () => {
       });
       setErrors({});
   
-      // Recarrega a página
-      window.location.reload();
-    } catch (error : any) {
+    } catch (error: any) {
       console.error("Erro ao adicionar Transação:", error.response?.data || error.message);
     }
   };

@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Validation from "../hooks/LoginValidation";
-
-import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import axios from "axios";
+
 // Estilização utilizando styled-components
 const Container = styled.div`
   height: 100vh;
@@ -112,8 +112,10 @@ const Options01 = styled.div`
 `;
 const RememberMe = styled.label`
   color: #bbb;
-  font-size: 14px;
-  gap:6px;
+  font-size: 0px;
+  opacity: 0;
+  pointer-events:none;
+  gap:0px;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -167,29 +169,22 @@ interface FormValues {
 }
 
 const Login = () => {
-
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const [values, setValues] = useState<FormValues>({
-    email: '',
-    password: '',
-  });
-
-
+  const [values, setValues] = useState<FormValues>({ email: "", password: "" });
   const [errors, setErrors] = useState<Partial<FormValues>>({});
+  const [errorMessage, setErrorMessage] = useState("");
+  const [rememberMe, setRememberMe] = useState(true);
+
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValues((prev) => ({
-      ...prev,
-      [event.target.name]: event.target.value,
-    }));
+    setValues((prev) => ({ ...prev, [event.target.name]: event.target.value }));
   };
 
-  const [rememberMe, setRememberMe] = useState(false); //Lembrar de im opçao
 
 
-  const { setIsAuthenticated } = useAuth();
-  const navigate = useNavigate();
+
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -198,29 +193,9 @@ const Login = () => {
   
     if (!validationErrors.email && !validationErrors.password) {
       try {
-        console.log("Enviando dados para o backend:", values); // Log para debug
-        const res = await axios.post("http://localhost:8081/api/Login", values);
-  
-        if (res.status === 200 && res.data.message === "Sucesso") {
-          console.log("Login bem-sucedido. Redirecionando...");
-          if (rememberMe) {
-            localStorage.setItem("token", res.data.token);
-          } else {
-            sessionStorage.setItem("token", res.data.token);
-          }
-          setIsAuthenticated(true);
-          navigate("/Dashboard"); // Redireciona
-        } else {
-          setErrorMessage(res.data.message || "Erro inesperado. Tente novamente.");
-        }
-      } catch (err: any) {
-        if (err.response) {
-          console.error("Erro ao fazer login:", err.response.data);
-          setErrorMessage(err.response.data.message || "Erro ao fazer login.");
-        } else {
-          console.error("Erro ao fazer login:", err);
-          setErrorMessage("Erro no servidor. Por favor, tente novamente mais tarde.");
-        }
+        await login(values.email, values.password, rememberMe);
+      } catch (err) {
+        setErrorMessage("Erro ao fazer login. Verifique suas credenciais.");
       }
     }
   };
@@ -230,7 +205,7 @@ const Login = () => {
       <Form>
         <form id="form" onSubmit={handleSubmit}>
           <CenterContainer>
-            <Logo src="/svg/LogoBl.svg" alt="Logo" />          
+            <Logo src="/svg/LogoN.svg" alt="Logo" />          
           </CenterContainer>
           <ContainerLabel>
             <Label id="email">Email</Label>
@@ -243,13 +218,14 @@ const Login = () => {
           <Input onChange={handleInput} type="password" placeholder="Digite sua senha" name="password" />
           {errors.password && <ErrorSpan>{errors.password}</ErrorSpan>}
           <Options01>
+
             <RememberMe>
               <input id="checkbox" type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
               /> Lembrar de mim
             </RememberMe>
-            <Links href="#">Esqueceu sua senha?</Links>
+         
           </Options01>
           {errorMessage && (
             <ErrorSpans>{errorMessage}</ErrorSpans>

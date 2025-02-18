@@ -25,7 +25,12 @@ const iconOptions = [
   { id: 15, name: "Outros", icon: faIcons },
 ];
 
-
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  return {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+};
 
 const AddingCategory = () => {
 
@@ -39,7 +44,7 @@ const AddingCategory = () => {
   const [errorMessages, setErrorMessages] = useState<any>({});
 
   useEffect(() => {
-    axios.get("http://localhost:8081/api/typing") // Alterado para o endpoint correto
+    axios.get("http://localhost:8081/api/typing",getAuthHeaders()) // Alterado para o endpoint correto
       .then((response) => {
         setTypings(response.data); // Atualiza o estado com os typings
       })
@@ -59,31 +64,36 @@ const AddingCategory = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     const validationErrors = validate(values);
-  
+
     console.log("Valores enviados para o backend:", values);
-  
+
     if (Object.keys(validationErrors).length === 0) {
-      try {
-        const iconName = iconOptions.find(icon => icon.id === parseInt(values.iconId))?.name || "defaultIcon"; // Ajuste para pegar o nome do ícone
-        const response = await axios.post("http://localhost:8081/api/addcategories", {
-          ...values,
-          icon: iconName,  // Passando o nome do ícone e não o ID
-        });
-        alert(response.data.message);
-  
-        // Reseta os valores do formulário
-        setValues({ name: "", typing: "", iconId: "" });  
-        // Recarrega a página
-        window.location.reload();
-      } catch (error: any) {
-        console.error("Erro ao adicionar categoria:", error.response?.data || error.message);
-      }
+        try {
+            const iconName = iconOptions.find(icon => icon.id === parseInt(values.iconId))?.name || "defaultIcon"; 
+            const response = await axios.post(
+                "http://localhost:8081/api/addcategories",
+                {
+                    ...values,
+                    icon: iconName, // Passando o nome do ícone e não o ID
+                },
+                getAuthHeaders()
+            );
+
+            alert(response.data.message);
+
+            // Resetando os valores do formulário sem recarregar a página
+            setValues({ name: "", typing: "", iconId: "" });
+            setErrorMessages({}); // Limpa os erros
+
+        } catch (error: any) {
+            console.error("Erro ao adicionar categoria:", error.response?.data || error.message);
+        }
     } else {
-      setErrorMessages(validationErrors);
+        setErrorMessages(validationErrors);
     }
-  };
+};
 
   return (
     <GroupWelcome>

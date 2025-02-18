@@ -129,7 +129,12 @@ justify-content:center;
 align-items:center;
 border-radius:4px;
 `
-const Price = styled.p`
+
+interface PriceProps {
+  type: "Despesa" | "Ganho";
+}
+
+const Price = styled.p<PriceProps>`
   color: ${(props) => (props.type === "Despesa" ? "red" : "green")};
   font-size: 1.1rem;
   font-weight: 400;
@@ -139,6 +144,7 @@ const Price = styled.p`
     font-size: 0.8rem;
   }
 `;
+
 const SepIcon = styled.div`
 display:flex;
 width:30%;

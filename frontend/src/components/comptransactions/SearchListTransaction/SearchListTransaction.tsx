@@ -53,6 +53,12 @@ const categoryIconMapping: { [key: string]: any } = {
   "Presente": faHandHoldingHeart,
   "Outros": faIcons,
 };
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  return {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+};
 
 const SearchListTransaction = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -70,8 +76,8 @@ const SearchListTransaction = () => {
       try {
         setLoading(true);
         const [transactionsResponse, categoriesResponse] = await Promise.all([
-          axios.get("http://localhost:8081/api/transactionslist"),
-          axios.get("http://localhost:8081/api/categories"),
+          axios.get("http://localhost:8081/api/transactionslist", getAuthHeaders()),
+          axios.get("http://localhost:8081/api/categories", getAuthHeaders()),
         ]);
         setTransactions(transactionsResponse.data);
         setCategories(categoriesResponse.data);
@@ -101,48 +107,71 @@ const SearchListTransaction = () => {
   };
 
   // Função para editar a transação
-  const handleEdit = (e: React.FormEvent) => {
+
+  const handleEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
+    if (!editedTransaction || !editedTransaction.id) {
+      console.error("Erro: Transação inválida para edição.");
+      alert("Erro: Transação inválida para edição.");
+      return;
+    }
+  
+    // Garantir que os valores não sejam null
+    if (!newValue || !newDescription || !newCategoryId) {
+      alert("Por favor, preencha todos os campos.");
+      return;
+    }
+  
+    // Criar o objeto correto para enviar para o backend
     const updatedTransaction = {
-      value: newValue,
+      amount: parseFloat(newValue), // Corrigido para "amount"
       description: newDescription,
-      type: newType,  // 'Despesa' ou 'Ganho'
-      category: newCategoryId,  // ID da categoria
+      type: Number(newType), // Certificando que é um número
+      category_id: Number(newCategoryId), // Corrigido para "category_id"
     };
-
-    axios.put(`http://localhost:8081/api/transaction/${editedTransaction.id}`, updatedTransaction)
-      .then(response => {
-        console.log("Transação atualizada com sucesso");
-
-        // Recarregar a lista de transações após a atualização
-        axios.get("http://localhost:8081/api/transactionslist")
-          .then(response => {
-            setTransactions(response.data); // Atualiza a lista com os dados mais recentes do servidor
-            handleCloseModal(); // Fechar o modal
-          })
-          .catch(error => {
-            console.error("Erro ao carregar as transações atualizadas:", error);
-          });
-      })
-      .catch(error => {
-        console.error("Erro ao atualizar transação:", error);
-      });
+  
+    console.log("Enviando dados para a API:", updatedTransaction);
+  
+    try {
+      await axios.put(
+        `http://localhost:8081/api/transaction/${editedTransaction.id}`,
+        updatedTransaction,
+        getAuthHeaders() // Já inclui os headers corretamente
+      );
+  
+      console.log("Transação atualizada com sucesso!");
+  
+      // Recarregar a lista de transações
+      const response = await axios.get("http://localhost:8081/api/transactionslist", getAuthHeaders());
+      setTransactions(response.data);
+      handleCloseModal();
+    }catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Erro ao atualizar transação:", error.response?.data || error.message);
+        alert(`Erro ao atualizar transação: ${error.response?.data?.message || error.message}`);
+      } else if (error instanceof Error) {
+        console.error("Erro inesperado:", error.message);
+        alert(`Erro inesperado: ${error.message}`);
+      } else {
+        console.error("Erro desconhecido:", error);
+        alert("Ocorreu um erro inesperado.");
+      }
+    }
   };
+  
 
-  // Função para excluir a transação
-  const handleDelete = () => {
-    axios.delete(`http://localhost:8081/api/transaction/${editedTransaction.id}`)
-      .then(response => {
-        alert("Transação excluída com sucesso!");
-        setIsModalOpen(false); // Fechar o modal
-        // Remover a transação da lista local
-        setTransactions(transactions.filter(transaction => transaction.id !== editedTransaction.id));
-      })
-      .catch(error => {
-        console.error("Erro ao excluir transação:", error);
-        alert("Falha ao excluir transação.");
-      });
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:8081/api/transaction/${editedTransaction.id}`, getAuthHeaders());
+
+      alert("Transação excluída com sucesso!");
+      setIsModalOpen(false);
+      setTransactions(transactions.filter(transaction => transaction.id !== editedTransaction.id));
+    } catch (error) {
+      console.error("Erro ao excluir transação:", error);
+      alert("Falha ao excluir transação.");
+    }
   };
 
   return (

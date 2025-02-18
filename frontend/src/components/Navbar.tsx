@@ -1,8 +1,9 @@
 // Importações necessárias
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 
 // Estilos utilizando styled-components
@@ -134,7 +135,7 @@ const Avatar = styled.div`
 
 const DropdownMenu = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "isOpen",
-})<{ isOpen: boolean }>`
+}) <{ isOpen: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -149,7 +150,7 @@ const DropdownMenu = styled.div.withConfig({
   padding: 2rem;
   z-index: 999;
 `;
-const DropdownItem = styled.a`
+const DropdownItem = styled(Link)`
   color: white;
   text-decoration: none;
   font-weight:600;
@@ -225,26 +226,25 @@ const Navbar = () => {
       </NavbarContainer>
       <DropdownMenu isOpen={menuOpen}>
         <CloseButton onClick={handleToggleMenu}>×</CloseButton>
-        <DropdownItem href="#" onClick={handleToggleMenu}>
-        <Link to={'/dashboard'}>
-        <Linkcustom>Dashboard</Linkcustom>
-        </Link>          
-        </DropdownItem>
-        <DropdownItem href="#" onClick={handleToggleMenu}>
-        <Link to={'/transactions'}>
-        <Linkcustom>Transações</Linkcustom>
-        </Link>          
-        </DropdownItem>
-        <DropdownItem href="#" onClick={handleToggleMenu}>
-        <Link to={'/settings'}>
-        <Linkcustom>Settings</Linkcustom>
-        </Link>          
-        </DropdownItem>
-        <DropdownItem onClick={handleLogout}>
-          <ButtonLogout>Logout</ButtonLogout>
-        </DropdownItem>
+
+        <DropdownItem to="/dashboard" onClick={handleToggleMenu}>
+        Dashboard
+      </DropdownItem>
+  
+      <DropdownItem to="/transactions" onClick={handleToggleMenu}>
+        Transações
+      </DropdownItem>
+  
+      <DropdownItem to="/settings" onClick={handleToggleMenu}>
+        Settings
+      </DropdownItem>
+  
+    
+      <ButtonLogout  onClick={handleLogout}>Logout</ButtonLogout>
+     
       </DropdownMenu>
     </>
+
   );
 };
 

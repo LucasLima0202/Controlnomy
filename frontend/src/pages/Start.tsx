@@ -174,6 +174,17 @@ const StartHereForm = () => {
     };
   };
   const handleComplete = async () => {
+    const token = localStorage.getItem("token"); // Pega o token salvo no login
+    if (!token) {
+      alert("Usuário não autenticado. Faça login novamente.");
+      navigate("/login"); // Redireciona para login
+      return;
+    }
+  
+    const headers = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+  
     const data = {
       total_amount: parseFloat(firstTabInput) || 0,
       released_amount: parseInt(releasedPercentage, 10) || 0,
@@ -183,12 +194,12 @@ const StartHereForm = () => {
     console.log("Dados enviados ao servidor:", data);
   
     try {
-      const res = await axios.post("http://localhost:8081/api/starthereregistevalue", data);
+      const res = await axios.post("http://localhost:8081/api/starthereregistevalue", data, headers);
       console.log("Resposta do servidor:", res.data);
       alert("Valores atualizados com sucesso!");
       navigate("/");
     } catch (err) {
-      console.error("Erro ao registrar valores:", err);
+      console.error("Erro ao registrar valores:", err.response?.data || err.message);
       alert("Erro ao registrar os valores. Tente novamente.");
     }
   };

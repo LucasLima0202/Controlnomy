@@ -202,7 +202,7 @@ const handleSubmit = async (event: React.FormEvent) => {
       <Form>
           <form onSubmit={handleSubmit} >
              <CenterContainer>
-             <Logo src="/svg/LogoBl.svg" alt="Logo" />          
+             <Logo src="/svg/LogoN.svg" alt="Logo" />          
              </CenterContainer>
             <Icon className="fas fa-user-plus" />
             <ContainerLabel>

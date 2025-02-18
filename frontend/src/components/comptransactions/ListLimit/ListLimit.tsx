@@ -45,19 +45,23 @@ const categoryIconMapping: { [key: string]: any } = {
 
 
 
-
 const ListLimit = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    const headers = {
+      headers: { Authorization: `Bearer ${token}` }
+    };
+
     const fetchTransactionsAndCategories = async () => {
       try {
         setLoading(true);
         const [transactionsResponse, categoriesResponse] = await Promise.all([
-          axios.get("http://localhost:8081/api/limit_transactionslist"),
-          axios.get("http://localhost:8081/api/categories"),
+          axios.get("http://localhost:8081/api/limit_transactionslist", headers),
+          axios.get("http://localhost:8081/api/categories", headers),
         ]);
         setTransactions(transactionsResponse.data);
         setCategories(categoriesResponse.data);
@@ -110,7 +114,7 @@ const ListLimit = () => {
               </Row>
             );
           })}
-         
+
         </Container>
       </GroupLine>
     </GroupWelcome>

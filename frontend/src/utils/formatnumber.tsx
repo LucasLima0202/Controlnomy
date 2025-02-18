@@ -1,17 +1,28 @@
-export const formatNumber = (amount, decimalCount = 2, decimal = ",", thousands = ".") => {
-    try {
-      decimalCount = Math.abs(decimalCount);
-      decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
-  
-      const negativeSign = amount < 0 ? "-" : "";
-  
-      let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
-      let j = (i.length > 3) ? i.length % 3 : 0;
-  
-      return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
-    } catch (e) {
-      console.error(e);
-      return "0";
-    }
-  };
-  
+export const formatNumber = (
+  amount: number,
+  decimalCount: number = 2,
+  decimal: string = ",",
+  thousands: string = "."
+): string => {
+  try {
+    decimalCount = Math.abs(decimalCount);
+    decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+    const negativeSign = amount < 0 ? "-" : "";
+
+    // Garantimos que 'amount' continua sendo um número, sem redefini-lo para string
+    const fixedAmount = Math.abs(amount).toFixed(decimalCount); 
+    const integerPart = parseInt(fixedAmount, 10).toString();
+    let j = integerPart.length > 3 ? integerPart.length % 3 : 0;
+
+    return (
+      negativeSign +
+      (j ? integerPart.substr(0, j) + thousands : "") +
+      integerPart.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) +
+      (decimalCount ? decimal + fixedAmount.split(".")[1] : "")
+    );
+  } catch (e) {
+    console.error(e);
+    return "0";
+  }
+};

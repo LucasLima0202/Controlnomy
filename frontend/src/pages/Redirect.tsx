@@ -128,7 +128,7 @@ const RedirectPage: React.FC = () => {
   return (
     <Body>
       <LogoWrapper>
-        <Logo src="/svg/LogoBl.svg" alt="Logo" />
+        <Logo src="/svg/LogoN.svg" alt="Logo" />
       </LogoWrapper>
       <CountdownWrapper>
         {count > 0 ? (

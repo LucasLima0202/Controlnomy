@@ -52,12 +52,16 @@ const TransactionList = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const token = localStorage.getItem("token"); 
+    const headers = {
+      headers: { Authorization: `Bearer ${token}` }
+    };
     const fetchTransactionsAndCategories = async () => {
       try {
         setLoading(true);
         const [transactionsResponse, categoriesResponse] = await Promise.all([
-          axios.get("http://localhost:8081/api/transactionslist"),
-          axios.get("http://localhost:8081/api/categories"),
+          axios.get("http://localhost:8081/api/transactionslist",headers),
+          axios.get("http://localhost:8081/api/categories",headers),
         ]);
         setTransactions(transactionsResponse.data);
         setCategories(categoriesResponse.data);

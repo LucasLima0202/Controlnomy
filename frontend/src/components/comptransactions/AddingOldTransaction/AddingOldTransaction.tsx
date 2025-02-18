@@ -27,6 +27,12 @@ import {
     Input
 } from "./AddingOldTransaction.styled"
 
+const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      headers: { Authorization: `Bearer ${token}` }
+    };
+  };
 
 interface TransactionData {
     value: number;
@@ -66,7 +72,7 @@ const AddingOldTransaction = () => {
 
     useEffect(() => {
         axios
-            .get("http://localhost:8081/api/categories")
+            .get("http://localhost:8081/api/categories",getAuthHeaders())
             .then((response) => {
                 setCategories(response.data);
             })
@@ -80,10 +86,8 @@ const AddingOldTransaction = () => {
         e.preventDefault();
         
         // Validação no frontend
-        const validationErrors = validate({
-            ...values,
-            date: startDate?.toISOString().slice(0, 10), // Formata a data para o formato correto
-        });
+        const formattedDate = startDate ? startDate.toISOString().slice(0, 10) : "";
+        const validationErrors = validate({ ...values, date: formattedDate });
     
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
@@ -92,12 +96,18 @@ const AddingOldTransaction = () => {
     
         try {
             // Envio de dados para o backend
-            const response = await axios.post("http://localhost:8081/api/transactiondate", {
-                ...values,
-                date: startDate?.toISOString().slice(0, 10), // Inclui a data formatada
-            });
+            const response = await axios.post(
+                "http://localhost:8081/api/transactiondate",
+                {
+                    ...values,
+                    date: formattedDate, // Inclui a data formatada
+                },
+                getAuthHeaders()
+            );
     
             alert(response.data.message); // Mensagem de sucesso
+    
+            // Resetando os valores do formulário sem recarregar a página
             setValues({
                 value: 0,
                 type: false,
@@ -105,8 +115,10 @@ const AddingOldTransaction = () => {
                 description: "",
                 date: "",
             });
+    
             setStartDate(new Date()); // Reseta o componente de data
-            window.location.reload(); // Recarrega a página
+            setErrors({}); // Limpa os erros
+    
         } catch (error: any) {
             console.error("Erro ao adicionar transação:", error.response?.data || error.message);
         }
@@ -125,7 +137,7 @@ const AddingOldTransaction = () => {
                             </ContainerLabel>
                             <StyledDatePicker
                                 selected={startDate}
-                                onChange={(date) => setStartDate(date)}
+                                onChange={(date: Date | null ) => setStartDate(date)}
                                 dateFormat="dd/MM/yyyy"
                             />
                         {errors.date && <ErrorSpan>{errors.date}</ErrorSpan>}

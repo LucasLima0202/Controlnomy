@@ -116,24 +116,29 @@ const Title = styled.h1`
   margin-bottom: 20px;
 `;
 
-const ButtonBIg = styled.button`
+interface ButtonProps {
+  bgcolor?: string;
+  color?: string;
+  fontsize?: string;
+}
+
+const ButtonBig = styled.button<ButtonProps>`
   outline: none;
   border: none;
   font-weight: 600;
   width: 100%;
   height: 10.5rem;
-  background: ${({ bgcolor }) => bgcolor || '#282B2F'};  // Usar a cor de fundo fornecida ou o valor padrão
-  color: ${({ color }) => color || '#fff'};  // Usar a cor fornecida ou o valor padrão
-  font-size: ${({ fontsize }) => fontsize || '16px'};  // Usar o fontsize fornecido ou o valor padrão
+  background: ${({ bgcolor }) => bgcolor || '#282B2F'};  
+  color: ${({ color }) => color || '#fff'};  
+  font-size: ${({ fontsize }) => fontsize || '16px'}; 
   margin-bottom: 5%;
   margin-top: 5%;
   letter-spacing: 0.5px;
   border-radius: 5px;
   cursor: pointer;
   transition: all ease-in-out 0.5s;
-  padding-left:5%;
-  padding-right:5%;
-
+  padding-left: 5%;
+  padding-right: 5%;
 
   &:hover {
     transform: scale(1.03);
@@ -143,7 +148,8 @@ const ButtonBIg = styled.button`
   &:focus {
     outline: none;
   }
-`
+`;
+
 
 
 const GroupWelcome = styled.div`
@@ -422,32 +428,39 @@ const getCategoryColor = (index: number) => pastelColors[index % pastelColors.le
  const [categorySpending, setCategorySpending] = useState<CategorySpending[]>([]);
  const [moneyFlow, setMoneyFlow] = useState<MoneyFlow[]>([]);
 
-  useEffect(() => {
-      const month = selectedDate.getMonth() + 1;
-    const year = selectedDate.getFullYear();
+ useEffect(() => {
+  const token = localStorage.getItem("token"); // Pegando o token armazenado
 
-    Promise.all([
-      axios.get(`http://localhost:8081/api/currentamountbmonth/${year}/${month}`),
-      axios.get(`http://localhost:8081/api/spenttotalbmonth/${year}/${month}`),
-      axios.get(`http://localhost:8081/api/earntotalbmonth/${year}/${month}`),
-      axios.get(`http://localhost:8081/api/releasedamountbmonth/${year}/${month}`),
-      axios.get<WeeklySpending[]>(`http://localhost:8081/api/chart_weekly_spending/${year}/${month}`),
-      axios.get<CategorySpending[]>(`http://localhost:8081/api/chart_category_spending/${year}`),
-      axios.get<MoneyFlow[]>(`http://localhost:8081/api/chart_money_flow/${year}`)
-    ])
-      .then(([response1, response2, response3, response4, weeklyResponse, categoryResponse, moneyFlowResponse]) => {
-        setCurrentamnt(response1.data.saldo_atual);
-        setSpendtotal(response2.data.total_gastos);
-        setEarntotal(response3.data.total_ganho);
-        setReleasedamnt(response4.data.saldo_liberado);
-        setWeeklySpending(weeklyResponse.data);
-        setCategorySpending(categoryResponse.data);
-        setMoneyFlow(moneyFlowResponse.data);
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar dados do mês e dos gráficos:", error);
-      });
-  }, [selectedDate]);
+  const headers = {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+    
+  const month = selectedDate.getMonth() + 1;
+  const year = selectedDate.getFullYear();
+
+  Promise.all([
+    axios.get(`http://localhost:8081/api/currentamountbmonth/${year}/${month}`, headers),
+    axios.get(`http://localhost:8081/api/spenttotalbmonth/${year}/${month}`, headers),
+    axios.get(`http://localhost:8081/api/earntotalbmonth/${year}/${month}`, headers),
+    axios.get(`http://localhost:8081/api/releasedamountbmonth/${year}/${month}`, headers),
+    axios.get<WeeklySpending[]>(`http://localhost:8081/api/chart_weekly_spending/${year}/${month}`, headers),
+    axios.get<CategorySpending[]>(`http://localhost:8081/api/chart_category_spending/${year}`, headers),
+    axios.get<MoneyFlow[]>(`http://localhost:8081/api/chart_money_flow/${year}`, headers)
+  ])
+  .then(([response1, response2, response3, response4, weeklyResponse, categoryResponse, moneyFlowResponse]) => {
+    setCurrentamnt(response1.data.saldo_atual);
+    setSpendtotal(response2.data.total_gastos);
+    setEarntotal(response3.data.total_ganho);
+    setReleasedamnt(response4.data.saldo_liberado);
+    setWeeklySpending(weeklyResponse.data);
+    setCategorySpending(categoryResponse.data);
+    setMoneyFlow(moneyFlowResponse.data);
+  })
+  .catch((error) => {
+    console.error("Erro ao buscar dados do mês e dos gráficos:", error);
+  });
+}, [selectedDate]);
+
 
   const uData = [earntotal];
   const pData = [spenttotal];
@@ -491,7 +504,7 @@ const getCategoryColor = (index: number) => pastelColors[index % pastelColors.le
                       </ArrowButton>
                       <DatePicker
                         selected={selectedDate}
-                        onChange={date => setSelectedDate(date)}
+                        onChange={date => setSelectedDate(date as Date)}
                         dateFormat="MM/yyyy"
                         showMonthYearPicker
                         customInput={<Button />}
@@ -518,7 +531,7 @@ const getCategoryColor = (index: number) => pastelColors[index % pastelColors.le
                   <FontAwesomeIcon icon={faMoneyBill} fontSize={21} />
                 </IconGroup>
                 <CollumTypeIcon>
-                  <SpanColor>Saldo Atual - Trabalhar</SpanColor>
+                  <SpanColor>Saldo Atual</SpanColor>
                   <Mp>R$ {currentamnt}</Mp>
                 </CollumTypeIcon>
               </Cardarticle>
@@ -620,9 +633,9 @@ const getCategoryColor = (index: number) => pastelColors[index % pastelColors.le
             </ColumnCustom>
             <ColumButton>
             <Link to="/transactions">
-            <ButtonBIg>
+            <ButtonBig>
               <FontAwesomeIcon icon={faPlus}/>
-            </ButtonBIg>
+            </ButtonBig>
             </Link>
             </ColumButton>
           </ContainerRow>
