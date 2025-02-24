@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Navbarui from "../components/Navbar";
 import animationData from "../assets/lotties/welcome.json"
-import DatePicker from "react-datepicker";
+import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Importando o estilo para o DatePicker
 import BoxAtalhos from "../components/BoxHotkey";
 import BoxGlobal from "../components/BoxGlobal";
@@ -462,6 +462,7 @@ const getCategoryColor = (index: number) => pastelColors[index % pastelColors.le
 }, [selectedDate]);
 
 
+
   const uData = [earntotal];
   const pData = [spenttotal];
   const xLabels = [
@@ -481,7 +482,9 @@ const getCategoryColor = (index: number) => pastelColors[index % pastelColors.le
     nextMonth.setMonth(nextMonth.getMonth() + 1); // Incrementa o mês
     setSelectedDate(nextMonth);
   };
-
+  const AnyDatePicker = ReactDatePicker as any;
+  const BarChartAny = BarChart as any;
+  const PieChartAny = PieChart as any;
   return (
     <WholeSite>
       <Navbarui />
@@ -502,9 +505,11 @@ const getCategoryColor = (index: number) => pastelColors[index % pastelColors.le
                       <ArrowButton onClick={handlePrevMonth}>
                         <FontAwesomeIcon icon={faChevronLeft} fontSize={20} />
                       </ArrowButton>
-                      <DatePicker
+                      <AnyDatePicker
                         selected={selectedDate}
-                        onChange={date => setSelectedDate(date as Date)}
+                        onChange={(date: Date | null) => {
+                          if (date) setSelectedDate(date);
+                        }}
                         dateFormat="MM/yyyy"
                         showMonthYearPicker
                         customInput={<Button />}
@@ -582,7 +587,7 @@ const getCategoryColor = (index: number) => pastelColors[index % pastelColors.le
         <BoxAtalhos />
         <Title>Gastos Semanais ({selectedDate.toLocaleString("pt-BR", { month: "long" })})</Title>
         <Chartone>
-        <BarChart
+        <BarChartAny
           width={400}
           height={240}
           series={[
@@ -594,7 +599,7 @@ const getCategoryColor = (index: number) => pastelColors[index % pastelColors.le
         </Chartone>
         <Title>Gastos por Categoria ({year})</Title>
         <Chartone>
-        <PieChart
+        <PieChartAny
            series={[{
             data: categorySpending.map((c, index) => ({
               id: c.categoria,
@@ -610,7 +615,7 @@ const getCategoryColor = (index: number) => pastelColors[index % pastelColors.le
         </Chartone>
         <Title>Fluxo de Dinheiro ({year})</Title>
         <Chartone>
-        <BarChart
+        <BarChartAny
           width={400}
           height={240}
           series={[

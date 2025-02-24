@@ -44,7 +44,7 @@ const Updateuser = () => {
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const handleUpdate = async (e) => {
+  const handleUpdate = async (e : any) => {
     e.preventDefault();
 
     // Criando um objeto de atualização apenas com os valores modificados

@@ -95,7 +95,7 @@ const FaqQuestion = styled.div`
   }
 `;
 
-const FaqAnswer = styled.div`
+const FaqAnswer = styled.div<{ isOpen: boolean }>`
   max-height: ${({ isOpen }) => (isOpen ? "700px" : "0")};
   overflow: hidden;
   padding: ${({ isOpen }) => (isOpen ? "15px 20px" : "0 20px")};
@@ -113,12 +113,11 @@ const FaqAnswer = styled.div`
   }
 `;
 
-const Arrow = styled.div`
+const Arrow = styled.div<{ isOpen: boolean }>`
   font-size: 18px;
   transition: transform 0.3s ease;
   transform: ${({ isOpen }) => (isOpen ? "rotate(180deg)" : "rotate(0)")};
 `;
-
 const Title = styled.h1`
   font-size: 1.5rem;
   text-align: center;
@@ -195,7 +194,7 @@ const faqData = [
 const SettingsPage = () => {
   const [openIndex, setOpenIndex] = useState(null);
 
-  const toggleFAQ = (index) => {
+  const toggleFAQ = (index : any) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 

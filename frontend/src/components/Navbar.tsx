@@ -88,8 +88,7 @@ const ButtonLogout = styled.button`
   transition-property: border-left, border-right, box-shadow;
 
   &:hover {
-   
-    box-shadow: 0 0 100px rgba(131, 131, 131, 0.767);
+   transform: scale(1.1);
   }
 `
 
@@ -132,6 +131,7 @@ const Avatar = styled.div`
   justify-content: center;
   cursor: pointer;
 `;
+
 
 const DropdownMenu = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "isOpen",
@@ -203,10 +203,8 @@ const Navbar = () => {
     setMenuOpen((prev) => !prev);
   };
   const handleLogout = () => {
-    // Lógica para logout
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
-    console.log("Logout realizado.");
+    localStorage.removeItem('authToken');
+    window.location.href = '/login'; 
   };
   return (
     <>
@@ -239,8 +237,7 @@ const Navbar = () => {
         Settings
       </DropdownItem>
   
-    
-      <ButtonLogout  onClick={handleLogout}>Logout</ButtonLogout>
+
      
       </DropdownMenu>
     </>

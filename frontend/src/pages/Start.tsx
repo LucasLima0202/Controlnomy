@@ -198,13 +198,13 @@ const StartHereForm = () => {
       console.log("Resposta do servidor:", res.data);
       alert("Valores atualizados com sucesso!");
       navigate("/");
-    } catch (err) {
+    } catch (err : any) {
       console.error("Erro ao registrar valores:", err.response?.data || err.message);
       alert("Erro ao registrar os valores. Tente novamente.");
     }
   };
   
-  
+  const FormWizardAny = FormWizard as any;
   const handleNextClick = () => {
     handleValidationError(); 
 
@@ -216,8 +216,8 @@ const StartHereForm = () => {
       <Logo src="/svg/Blackv.svg" alt="Logo" />          
       </Link>
 
-      <FormWizard onComplete={handleComplete}  color="#282B2F">
-          <FormWizard.TabContent
+      <FormWizardAny onComplete={handleComplete}  color="#282B2F">
+          <FormWizardAny.TabContent
             title="Registrar Conta"
             icon="fa fa-user"
           >
@@ -244,9 +244,9 @@ const StartHereForm = () => {
               />
               <ErrorSpan visible={isVisible}>Por favor, insira um valor válido para a conta.</ErrorSpan>
             </Column>
-          </FormWizard.TabContent>
+          </FormWizardAny.TabContent>
 
-          <FormWizard.TabContent
+          <FormWizardAny.TabContent
             title="Definir Valor Liberado"
             icon="fa fa-gear"
             isValid={checkValidateTab()}
@@ -264,9 +264,9 @@ const StartHereForm = () => {
                 placeholder="Porcentagem liberada"
               />
             </Column>
-          </FormWizard.TabContent>
+          </FormWizardAny.TabContent>
 
-          <FormWizard.TabContent
+          <FormWizardAny.TabContent
             title="Investimentos"
             icon="fa fa-check"
           >
@@ -284,8 +284,8 @@ const StartHereForm = () => {
                 placeholder="Porcentagem de investimento"
               />
             </Column>
-          </FormWizard.TabContent>
-        </FormWizard>
+          </FormWizardAny.TabContent>
+        </FormWizardAny>
 
 
         <style>

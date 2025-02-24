@@ -16,16 +16,17 @@ const GroupWelcome = styled.div`
   border-radius: 8px;
   box-shadow: rgba(201, 201, 201, 0.15) 0px 4px 16px, rgba(201, 201, 201, 0.15) 0px 8px 32px;
 `;
-const StyledDatePicker = styled(DatePicker)`
+
+const StyledDatePicker = styled((DatePicker as unknown) as React.ComponentType<any>)`
   font-size: 1rem;
-  padding-left:10px;
+  padding-left: 10px;
   height: 55px;
   border: solid 1px #D9D9D9;
   border-radius: 0.5rem;
   margin-top: 1rem;
 
-  &:focus{
-    outline:none;
+  &:focus {
+    outline: none;
   }
 `;
 

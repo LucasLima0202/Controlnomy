@@ -16,14 +16,14 @@ const GroupWelcome = styled.div `
 `;
 const StyledDatePicker = styled(DatePicker) `
   font-size: 1rem;
-  padding-left:10px;
+  padding-left: 10px;
   height: 55px;
   border: solid 1px #D9D9D9;
   border-radius: 0.5rem;
   margin-top: 1rem;
 
-  &:focus{
-    outline:none;
+  &:focus {
+    outline: none;
   }
 `;
 const GroupLine = styled.div `
